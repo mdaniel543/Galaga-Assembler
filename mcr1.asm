@@ -28,3 +28,53 @@ Imprimir MACRO dato
 	mov var, al
 	print var
 ENDM
+
+LimpiarArreglo MACRO arreglo
+Local Ciclo
+	xor si,si
+	xor cx,cx
+	mov cx, SIZEOF arreglo
+
+	Ciclo:
+	mov arreglo[si], 24h
+	inc si
+	loop Ciclo
+
+ENDM
+
+
+IniciarSesion MACRO 
+Local iniuser, user, inipass
+    iniuser:
+        LimpiarArreglo buffer
+        print msgUsername
+        xor si, si
+    user:
+        getChar
+        cmp al, 13
+        je inipass 
+        mov buffer[si], al
+        inc si
+        jmp user
+    inipass:
+        print buffer
+        LimpiarArreglo buffer
+        print msgPassword
+        xor si, si
+    pass:
+        getChar
+        cmp al, 13
+        je sale 
+        mov buffer[si], al
+        inc si
+        jmp pass
+    sale:
+        print buffer
+        LimpiarArreglo buffer
+ENDM
+
+Registrarse MACRO
+
+
+
+ENDM

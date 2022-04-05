@@ -11,6 +11,12 @@ INCLUDE mcr1.asm
     msglogin db 0ah, 0dh, 'LOGIN', 0ah, 0dh, '$'
     msgLine db '=========================================', 0ah, 0dh, '$'
     msgRegister db 0ah, 0dh, 'REGISTER', 0ah, 0dh, '$'
+    
+    msgUsername db 0ah, 0dh, 'Username: ', '$'  
+    msgPassword db 0ah, 0dh, 'Password: ', '$'  
+
+    buffer db 100 dup('$')
+
 .code 
 
 ;description
@@ -35,10 +41,12 @@ main PROC
     Login:
         print msglogin
         print msgLine
+        IniciarSesion
         jmp Exit
     Register:
         print msgRegister
         print msgLine
+        Registrarse
         jmp Exit
     Exit:
         mov ah, 4ch
