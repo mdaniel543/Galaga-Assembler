@@ -1,4 +1,5 @@
 INCLUDE mcr1.asm
+INCLUDE arch.asm
 
 .model small 
 .stack 
@@ -7,6 +8,7 @@ INCLUDE mcr1.asm
     opciones db '      MENU', 0ah, 0dh, 'F1. Login', 0ah, 0dh, 'F5. Register', 0ah, 0dh, 'F9. Exit', 0ah, 0dh, '$'
     salto db 10, 13, "$"
     var db 0, '$'
+    msgErrorGeneral db 0ah,0dh,'Se ha cometido algun error de archivo','$'
 
     msglogin db 0ah, 0dh, 'LOGIN', 0ah, 0dh, '$'
     msgLine db '=========================================', 0ah, 0dh, '$'
@@ -15,7 +17,27 @@ INCLUDE mcr1.asm
     msgUsername db 0ah, 0dh, 'Username: ', '$'  
     msgPassword db 0ah, 0dh, 'Password: ', '$'  
 
-    buffer db 100 dup('$')
+    bufferU db 30 dup('$')
+    bufferP db 30 dup('$')
+
+    contadorSI dw 0, '$'
+
+    ArchivoInformacion db 250 dup('$')
+    ArchivoRutaUsuarios db 'users.gal', 00h, '$'
+    ArchivoHandler dw ?, '$'
+
+    users db 1000 dup('$'),'$'
+
+    msgNoExisteUser db 0ah, 0dh, 'El Usuario no esta registrado', 0ah, 0dh, '$'
+    msgPassError db 0ah, 0dh, 'Password incorrecta', 0ah, 0dh, '$'
+
+    msgAdminLogin db 0ah, 0dh, 'Bienvenido Admin General', 0ah, 0dh, '$'
+    msgAdmin1 db 0ah, 0dh, 'Bienvenido Admin ', 0ah, 0dh, '$'
+    msgLoginCorrecto db 0ah, 0dh, 'Bienvenido Usuario ', 0ah, 0dh, '$'
+
+    msgUsuarioBloqueado db 0ah, 0dh, 'Usuario Bloqueado, Contacte con Administrador', 0ah, 0dh, '$'
+
+    
 
 .code 
 
@@ -29,6 +51,7 @@ main PROC
         je Menu
         jmp Inicio
     Menu:
+        UserGal
         print opciones
         getTecla
         cmp ah, 3Bh
@@ -41,13 +64,19 @@ main PROC
     Login:
         print msglogin
         print msgLine
-        IniciarSesion
-        jmp Exit
+        Credenciales
+        ComprobarUsuario 
+        jmp Menu
     Register:
         print msgRegister
         print msgLine
-        Registrarse
-        jmp Exit
+        Credenciales
+        EscribirUser
+        jmp Menu
+    Error:
+		print salto
+		print msgErrorGeneral
+		getChar
     Exit:
         mov ah, 4ch
 		xor al,al
