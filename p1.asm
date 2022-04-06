@@ -1,5 +1,8 @@
 INCLUDE mcr1.asm
 INCLUDE arch.asm
+INCLUDE user.asm
+INCLUDE admin.asm
+INCLUDE main.asm
 
 .model small 
 .stack 
@@ -9,6 +12,8 @@ INCLUDE arch.asm
     salto db 10, 13, "$"
     var db 0, '$'
     msgErrorGeneral db 0ah,0dh,'Se ha cometido algun error de archivo','$'
+
+    ;============ MENU PRINCIPAL =============
 
     msglogin db 0ah, 0dh, 'LOGIN', 0ah, 0dh, '$'
     msgLine db '=========================================', 0ah, 0dh, '$'
@@ -74,6 +79,11 @@ INCLUDE arch.asm
     intentos db 0, '$'
     guardarDI dw 0, '$'
     temp db 0, '$'
+
+    ;=================== MENU USUARIO ===============
+
+
+
 .code 
 
 ;description

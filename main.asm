@@ -185,7 +185,7 @@ LOCAL Inicio, ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
         mov temp, al
         inc di 
         mov al, users[di]
-        cmp al, 59
+        cmp al, 13
         je eh
 
         jmp ure
@@ -240,6 +240,8 @@ LOCAL Inicio, ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
         jmp final
     u9: 
         print msgLoginCorrecto
+        print salto 
+        MenUsuario
         jmp final
     u10:
         print msgAdmin1
@@ -568,6 +570,7 @@ EscribirUser MACRO
     CrearArchivo ArchivoRutaUsuarios,ArchivoHandler
     Registrarse
     CerrarArchivo ArchivoHandler
+    print msgRegistroCorrecto
     print salto 
 ENDM 
 
@@ -645,10 +648,6 @@ LOCAL e0, e1, e2, e3, e4, e5, e6
         mov users[si], al
         EscribirArchivoF users[si]    
         inc si
-        mov al, 59
-        mov users[si], al
-        EscribirArchivoF users[si]
-        inc si 
         mov al, 13
         mov users[si], al
         EscribirArchivoF users[si]
