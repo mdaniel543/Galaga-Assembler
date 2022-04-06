@@ -400,6 +400,7 @@ Local e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, e13, e14, e15, e16, e17
         jmp e6
     e6:
         print salto
+        getChar
         jmp e20
     e11:
         EscribirUser
