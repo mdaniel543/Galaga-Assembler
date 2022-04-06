@@ -116,6 +116,7 @@ LOCAL Inicio, ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
         xor di, di
         mov guardarDI, 0
         mov intentos, 0
+    ;======== compruebo el nombre de usuario =============
     u0:
         xor si, si
     u1:
@@ -129,25 +130,28 @@ LOCAL Inicio, ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
         jmp u1
     ur: 
         mov guardarDI, di 
+    ;==================compruebo la password del usuario==========
     u2:
         xor si, si 
     u3:
         inc di
         mov al, users[di]
         cmp al, 44
-        je u5 ; esta correcto
+        je u5 
         cmp al, bufferP[si]
         jne u6
         inc si
         jmp u3
+    ;============== busco el siguiente usuario ============
     u4:
         mov al, users[di]
         inc di
         cmp al, 13
-        je u0 ; va a buscar otro usuario con el enter
+        je u0 
         cmp al, 36
         je u7
         jmp u4
+    ;==============coinciden las credenciales============
     u5:
         inc di 
         mov al, users[di]
@@ -163,6 +167,7 @@ LOCAL Inicio, ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
         cmp al, 50; si es admin general
         je u11
         jmp final
+    ;============existe el usuario pero no esta correcta la password=========
     u6:
         print msgPassError
         print salto
@@ -173,6 +178,7 @@ LOCAL Inicio, ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
         cmp al, 3
         je ure
         jmp u6c
+    ;========= verifico que tipo de usuario es el que fallo 3 veces =======
     ure:
         inc di 
         mov al, users[di]
@@ -188,6 +194,7 @@ LOCAL Inicio, ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
         cmp al, 48
         je normal
         jne admin
+    ; ================ si es admin solo hago un delay de 30s==========
     admin:
         print msg3intentos
         print msgAdminPassE
@@ -195,6 +202,7 @@ LOCAL Inicio, ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
         print msgAdminPassE2
         Delay2 7000
         jmp u6c
+    ; ============= si es normal bloqueo el usuario en el arreglo==========
     normal:
         print msg3intentos
         mov di, guardarDI
@@ -204,11 +212,13 @@ LOCAL Inicio, ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
         cmp al, 44
         je cambiar
         jmp cloop
+    ; ================ escribo en el archivo de users.gal===========
     cambiar:
         inc di
         mov users[di], 49
         ActualizarUsers
         jmp u8
+    ; ==============continua con el intento de ingresar la pass========
     u6c:
         print msglogin
         print msgLine
@@ -218,10 +228,12 @@ LOCAL Inicio, ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
         Credenciales 01h
         mov di, guardarDI
         jmp u2
+    ;================no existe el usuario que ingreso===============
     u7:
         print msgNoExisteUser
         getChar
         jmp final
+    ;================= el usuario esta bloqueado ========
     u8:
         print msgUsuarioBloqueado
         getChar
