@@ -31,13 +31,16 @@ INCLUDE arch.asm
     msgNoExisteUser db 0ah, 0dh, '>>  El Usuario no esta registrado', 0ah, 0dh, '$'
     msgPassError db 0ah, 0dh, '>>  Password incorrecta', 0ah, 0dh, '$'
 
-    msgAdminLogin db 0ah, 0dh, 'Bienvenido Admin General', 0ah, 0dh, '$'
-    msgAdmin1 db 0ah, 0dh, 'Bienvenido Admin ', 0ah, 0dh, '$'
-    msgLoginCorrecto db 0ah, 0dh, 'Bienvenido Usuario ', 0ah, 0dh, '$'
+    msgAdminLogin db 0ah, 0dh, '>>  Bienvenido Admin General', 0ah, 0dh, '$'
+    msgAdmin1 db 0ah, 0dh, '>>  Bienvenido Admin ', 0ah, 0dh, '$'
+    msgLoginCorrecto db 0ah, 0dh, '>>  Bienvenido Usuario ', 0ah, 0dh, '$'
 
     msgUsuarioBloqueado db 0ah, 0dh, '>>  Usuario Bloqueado, Contacte con Administrador', 0ah, 0dh, '$'
-
-    longitud db 0, '$'
+    msg3intentos db 0ah, 0dh, '>>  Hubo 3 intentos fallidos', '$'
+    
+    msgAdminPassE db 0ah, 0dh, '>> Porfavor espere: 30s', '$'
+    msgAdminPassE2 db ' e intente nuevamente', 0ah, 0dh,  '$'
+    
 
     msgValidaciones db 0ah, 0dh, '>>                       Accion Rechazada                             <<', '$'
     msgValidacion   db 0ah, 0dh, '>>                                                                    <<', '$'
@@ -68,6 +71,9 @@ INCLUDE arch.asm
 
     msgRegistroCorrecto db 0ah, 0dh, '>>    Usuario registado correctamente ', 0ah, 0dh, '$'
 
+    intentos db 0, '$'
+    guardarDI dw 0, '$'
+    temp db 0, '$'
 .code 
 
 ;description
@@ -93,13 +99,13 @@ main PROC
     Login:
         print msglogin
         print msgLine
-        Credenciales
+        Credenciales 00h
         ComprobarUsuario 
         jmp Menu
     Register:
         print msgRegister
         print msgLine
-        Credenciales
+        Credenciales 00h
         ValidacionUsuario
         jmp Menu
     Error:

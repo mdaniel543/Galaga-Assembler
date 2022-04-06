@@ -54,8 +54,12 @@ aste MACRO
 ENDM
 
 
-Credenciales MACRO 
-Local iniuser, user, inipass, pass, sale
+Credenciales MACRO principio
+Local pord, iniuser, user, inipass, pass, sale
+    pord:
+        mov al, principio
+        cmp al, 01h
+        je inipass
     iniuser:
         LimpiarArreglo bufferU
         print msgUsername
@@ -409,20 +413,24 @@ ENDM
 
 
 ComprobarUsuario MACRO 
-LOCAL Inicio, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
+LOCAL Inicio, ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
     Inicio: 
-    xor di, di
+        xor di, di
+        mov guardarDI, 0
+        mov intentos, 0
     u0:
         xor si, si
     u1:
         mov al, users[di]
         cmp al, 44
-        je u2 ; comprobar pass 
+        je ur ; comprobar pass 
         cmp al, bufferU[si]
         jne u4
         inc si 
         inc di
         jmp u1
+    ur: 
+        mov guardarDI, di 
     u2:
         xor si, si 
     u3:
@@ -459,12 +467,66 @@ LOCAL Inicio, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
         jmp final
     u6:
         print msgPassError
-        jmp final
+        print salto
+        add intentos, 1
+        mov al, intentos
+
+        mov di, guardarDI
+        cmp al, 3
+        je ure
+        jmp u6c
+    ure:
+        inc di 
+        mov al, users[di]
+        mov temp, al
+        inc di 
+        mov al, users[di]
+        cmp al, 59
+        je eh
+
+        jmp ure
+    eh:
+        mov al, temp
+        cmp al, 48
+        je normal
+        jne admin
+    admin:
+        print msg3intentos
+        print msgAdminPassE
+        ;Contador30
+        print msgAdminPassE2
+        Delay2 7000
+        jmp u6c
+    normal:
+        print msg3intentos
+        mov di, guardarDI
+    cloop:
+        inc di
+        mov al, users[di]
+        cmp al, 44
+        je cambiar
+        jmp cloop
+    cambiar:
+        inc di
+        mov users[di], 49
+        ActualizarUsers
+        jmp u8
+    u6c:
+        print msglogin
+        print msgLine
+        print msgUsername
+        print bufferU
+        print salto
+        Credenciales 01h
+        mov di, guardarDI
+        jmp u2
     u7:
         print msgNoExisteUser
+        getChar
         jmp final
     u8:
         print msgUsuarioBloqueado
+        getChar
         jmp final
     u9: 
         print msgLoginCorrecto
@@ -478,6 +540,37 @@ LOCAL Inicio, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
     final:
         print salto
 ENDM
+
+delay MACRO numero
+LOCAL startD, endDelay
+	mov cx, 1
+	startD:
+	cmp cx, numero
+	je endDelay
+	inc cx
+	jmp startD
+	endDelay:
+ENDM
+
+Delay2 macro constante
+	LOCAL D1,D2,Fin_delay
+	push si
+	push di
+
+	mov si,constante
+	D1:
+	dec si
+	jz Fin_delay
+	mov di,constante
+	D2:
+	dec di
+	jnz D2
+	jmp D1
+
+	Fin_delay:
+	pop di
+	pop si
+endm
 
 EscribirUser MACRO 
     CrearArchivo ArchivoRutaUsuarios,ArchivoHandler
@@ -565,4 +658,22 @@ LOCAL e0, e1, e2, e3, e4, e5, e6
         EscribirArchivoF users[si]
     e6:
     ;EscribirArchivo users, ArchivoHandler
+ENDM
+
+
+ActualizarUsers MACRO
+LOCAL e0, e1, e2
+    e0:
+        CrearArchivo ArchivoRutaUsuarios,ArchivoHandler
+        xor si, si
+    e1:
+        mov al, users[si]
+        cmp al, 36
+        je e2
+        EscribirArchivoF users[si]
+        inc si
+        jmp e1
+    e2:
+        CerrarArchivo ArchivoHandler
+        print salto 
 ENDM
