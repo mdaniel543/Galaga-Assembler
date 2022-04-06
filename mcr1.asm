@@ -104,6 +104,309 @@ LOCAL
 	jc Error
 ENDM
 
+
+ValidacionUsuario MACRO 
+Local e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, e13, e14, e15, e16, e17, e18, e19, e20, e21, e22
+    e1:
+    xor si, si
+    mov banderaU1, 00h
+    mov banderaU2, 00h
+    mov banderaU3, 00h
+    mov banderaU4, 00h
+    mov banderaP1, 00h
+    mov banderaP2, 00h
+    mov banderaP3, 00h
+    mov banderaP4, 00h
+    mov banderaG, 00h
+    mov conteo, 0
+
+    e2: ;primera validacion
+        mov al, bufferU[si]
+        cmp al, 48
+        jae e3
+        
+        jmp e5
+    e3:
+        cmp al, 57
+        jbe e4
+
+        jmp e5
+    e4:
+        mov banderaU1, 01h
+        mov banderaG, 01h
+    e5:; segunda validacion
+        mov al, bufferU[si]
+        cmp al, 36
+        je e6
+
+        add conteo, 1 
+        inc si 
+        jmp e5
+
+    e6:
+        mov al, conteo
+        cmp al, 8
+        jae e7
+
+        jmp e8
+
+    e7: 
+        cmp al, 15
+        jbe e9
+
+    e8:
+        mov banderaU2, 01h
+        mov banderaG, 01h
+    e9:
+        xor di, di
+    e10:
+        xor si, si
+    e11:
+        mov al, users[di]
+        cmp al, 44
+        je e15 ; ya existe
+        cmp al, bufferU[si]
+        jne e14
+        inc si 
+        inc di
+        jmp e11
+    e14:
+        mov al, users[di]
+        inc di
+        cmp al, 13
+        je e10 ; va a buscar otro usuario con el enter
+        cmp al, 36
+        je e16
+        jmp e14
+    
+    e15:
+        mov banderaU3, 01h
+        mov banderaG, 01h
+    e16: ;cuarta validacion
+        xor si, si
+    e17: 
+        mov al, bufferU[si]
+
+        cmp al, 36
+        je e22
+
+        inc si
+
+        cmp al, 45 ;; -
+        je e17
+        cmp al, 46 ;; .
+        je e17
+        cmp al, 95 ;; _
+        je e17
+    
+        cmp al, 97 ;; si es mayor que a 
+        jae e18
+        cmp al, 65 ;; si es mayor que A
+        jae e19
+        cmp al, 48 ;; si es mayor a 0
+        jae e20
+    
+        jmp e21
+    e18:
+        cmp al, 122 ; si es menot que z
+        jbe e17
+        jmp e21
+    e19:
+        cmp al, 90 ;; si es mento que Z
+        jbe e17
+        jmp e21
+    e20: 
+        cmp al, 57 ;; menot que 9
+        jbe e17
+        jmp e21
+    e21:
+        mov banderaU4, 01h
+        mov banderaG, 01h
+    e22:
+        ValidacionPass
+ENDM
+
+
+
+ValidacionPass MACRO
+Local e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, e13, e14, e15, e16, e17, e18
+    e1:
+        xor si, si 
+        mov conteo, 0
+    e2: ;; VALIDACION 1 
+        mov al, bufferP[si]
+        inc si
+        
+        cmp al, 36 
+        je e4
+
+        cmp al, 48
+        jae e3
+        
+        jmp e2
+    e3:
+        cmp al, 57
+        jbe e5
+        jmp e2
+    e4:
+        mov banderaP2, 01h 
+        mov banderaG, 01h
+    e5: ;; VALIDACION 2
+        xor si, si 
+    e6:
+        mov al, bufferP[si]
+        inc si
+        
+        cmp al, 36 
+        je e8
+
+        cmp al, 65
+        jae e7
+        
+        jmp e6
+    e7:
+        cmp al, 90
+        jbe e9
+        jmp e6
+    e8:
+        mov banderaP1, 01h 
+        mov banderaG, 01h
+    e9: ;; VALIDACION 3
+        xor si, si 
+    e10:
+        mov al, bufferP[si]
+        inc si
+        
+        cmp al, 36 
+        je e12
+
+        cmp al, 33
+        je e13
+        cmp al, 62
+        je e13
+        cmp al, 37
+        je e13
+        cmp al, 59
+        je e13
+        cmp al, 42
+        je e13
+        
+        jmp e10
+    e12:
+        mov banderaP3, 01h 
+        mov banderaG, 01h
+    e13: ;; VALIDACION 4
+        xor si, si 
+    e14:
+        mov al, bufferP[si]
+        
+        cmp al, 36
+        je e15
+
+        add conteo, 1 
+        inc si 
+        jmp e14
+
+    e15:
+        mov al, conteo
+        cmp al, 16
+        jae e16
+
+        jmp e17
+
+    e16: 
+        cmp al, 20
+        jbe e18
+
+    e17:
+        mov banderaP4, 01h
+        mov banderaG, 01h
+
+    e18: 
+        ImprimirValidaciones
+ENDM
+
+
+ImprimirValidaciones MACRO 
+Local e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, e13, e14, e15, e16, e17, e18, e19, e20 
+    e0:
+        mov al, banderaG
+        cmp al, 01h
+        je eu
+        jne e11
+    eu:
+        print msgValidaciones
+        print msgValidacion
+        print msgRequisito
+    e1:
+        mov al, banderaU1
+        cmp al, 01h
+        je e2
+    e8:
+        mov al, banderaU2
+        cmp al, 01h
+        je e3
+    e9:
+        mov al, banderaU3
+        cmp al, 01h
+        je e4
+    e10:
+        mov al, banderaU4
+        cmp al, 01h
+        je e5
+    
+    e12: 
+        mov al, banderaP1
+        cmp al, 01h
+        je e16
+    e13: 
+        mov al, banderaP2
+        cmp al, 01h
+        je e17
+    e14: 
+        mov al, banderaP3
+        cmp al, 01h
+        je e18
+    e15: 
+        mov al, banderaP4
+        cmp al, 01h
+        je e19
+
+        jmp e6
+    e2:
+        print msgVU1
+        jmp e8 
+    e3:
+        print msgVU2
+        jmp e9
+    e4:
+        print msgVU3
+        jmp e10
+    e5:
+        print msgVU4
+        jmp e12
+
+    e16:
+        print msgP1
+        jmp e13
+    e17:
+        print msgP2
+        jmp e14
+    e18:
+        print msgP3
+        jmp e15
+    e19:
+        print msgP4
+        jmp e6
+    e6:
+        print salto
+        jmp e20
+    e11:
+        EscribirUser
+    e20:
+ENDM 
+
+
 ComprobarUsuario MACRO 
 LOCAL Inicio, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
     Inicio: 

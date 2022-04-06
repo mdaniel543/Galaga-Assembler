@@ -5,7 +5,7 @@ INCLUDE arch.asm
 .stack 
 .data 
     encabezado db "Universidad de San Carlos de Guatemala",10, 13, "Facultad de Ingenieria",10, 13, "Escuela de Ciencias y Sistemas",10, 13, "Arquitectura de Compiladores y ensambladores 1",10, 13, "Seccion A", 10, 13, "Marvin Daniel Rodriguez Felix", 10, 13, "201709450", 10, 13, "$"
-    opciones db '      MENU', 0ah, 0dh, 'F1. Login', 0ah, 0dh, 'F5. Register', 0ah, 0dh, 'F9. Exit', 0ah, 0dh, '$'
+    opciones db 0ah, 0dh, '      MENU', 0ah, 0dh, 'F1. Login', 0ah, 0dh, 'F5. Register', 0ah, 0dh, 'F9. Exit', 0ah, 0dh, '$'
     salto db 10, 13, "$"
     var db 0, '$'
     msgErrorGeneral db 0ah,0dh,'Se ha cometido algun error de archivo','$'
@@ -28,16 +28,45 @@ INCLUDE arch.asm
 
     users db 1000 dup('$'),'$'
 
-    msgNoExisteUser db 0ah, 0dh, 'El Usuario no esta registrado', 0ah, 0dh, '$'
-    msgPassError db 0ah, 0dh, 'Password incorrecta', 0ah, 0dh, '$'
+    msgNoExisteUser db 0ah, 0dh, '>>  El Usuario no esta registrado', 0ah, 0dh, '$'
+    msgPassError db 0ah, 0dh, '>>  Password incorrecta', 0ah, 0dh, '$'
 
     msgAdminLogin db 0ah, 0dh, 'Bienvenido Admin General', 0ah, 0dh, '$'
     msgAdmin1 db 0ah, 0dh, 'Bienvenido Admin ', 0ah, 0dh, '$'
     msgLoginCorrecto db 0ah, 0dh, 'Bienvenido Usuario ', 0ah, 0dh, '$'
 
-    msgUsuarioBloqueado db 0ah, 0dh, 'Usuario Bloqueado, Contacte con Administrador', 0ah, 0dh, '$'
+    msgUsuarioBloqueado db 0ah, 0dh, '>>  Usuario Bloqueado, Contacte con Administrador', 0ah, 0dh, '$'
 
-    
+    longitud db 0, '$'
+
+    msgValidaciones db 0ah, 0dh, '>>                       Accion Rechazada                             <<', '$'
+    msgValidacion   db 0ah, 0dh, '>>                                                                    <<', '$'
+    msgRequisito    db 0ah, 0dh, '>> Requisitos olvidados:                                              <<', '$'
+
+    msgVU1          db 0ah, 0dh, '>> No se puede empezar por numero el usuario                          <<', '$'
+    msgVU2          db 0ah, 0dh, '>> El usuario tiene que tener entre 8 y 15 caracteres                 <<', '$'
+    msgVU3          db 0ah, 0dh, '>> El usuario ya existe                                               <<', '$'
+    msgVU4          db 0ah, 0dh, '>> El usuario solo puede contener (-)(_)(.) como caracter especial    <<', '$'
+
+    msgP1           db 0ah, 0dh, '>> La contrasenia debe de tener al menos una mayuscula                <<', '$'
+    msgP2           db 0ah, 0dh, '>> La contrasenia debe de tener al menos un numero                    <<', '$'
+    msgP3           db 0ah, 0dh, '>> Se debe de tener al menos un caracter especial: (!)(>)(%)(;)(*)    <<', '$'
+    msgP4           db 0ah, 0dh, '>> La contrasenia debe contener entre 16 y 20 caracteres              <<', '$'
+
+    banderaU1 db 00h, '$'
+    banderaU2 db 00h, '$'
+    banderaU3 db 00h, '$'
+    banderaU4 db 00h, '$'
+
+    banderaP1 db 00h, '$'
+    banderaP2 db 00h, '$'
+    banderaP3 db 00h, '$'
+    banderaP4 db 00h, '$'
+
+    banderaG db 00h, '$'
+    conteo db 0, '$'
+
+    msgRegistroCorrecto db 0ah, 0dh, '>>    Usuario registado correctamente ', 0ah, 0dh, '$'
 
 .code 
 
@@ -71,7 +100,7 @@ main PROC
         print msgRegister
         print msgLine
         Credenciales
-        EscribirUser
+        ValidacionUsuario
         jmp Menu
     Error:
 		print salto
