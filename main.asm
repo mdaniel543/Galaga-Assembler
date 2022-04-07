@@ -169,6 +169,7 @@ LOCAL Inicio, ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
         jmp final
     ;============existe el usuario pero no esta correcta la password=========
     u6:
+        limpiar
         print msgPassError
         print salto
         add intentos, 1
@@ -232,22 +233,28 @@ LOCAL Inicio, ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
     u7:
         print msgNoExisteUser
         getChar
+        limpiar
         jmp final
     ;================= el usuario esta bloqueado ========
     u8:
         print msgUsuarioBloqueado
         getChar
+        limpiar
         jmp final
+    ;===============Ingreso al menu del Usuario=========
     u9: 
-        print msgLoginCorrecto
-        print salto 
+        limpiar 
         MenUsuario
         jmp final
+    ;==============Ingreso al menu de Admin ==============
     u10:
-        print msgAdmin1
+        limpiar 
+        MenuAdmin
         jmp final
+    ;============Ingreso al menu de Admin General==========
     u11:
-        print msgAdminLogin
+        limpiar
+        MenuAdminGeneral
         jmp final 
     final:
         print salto
@@ -560,6 +567,7 @@ Local e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, e13, e14, e15, e16, e17
     e6:
         print salto
         getChar
+        limpiar
         jmp e20
     e11:
         EscribirUser
@@ -570,8 +578,10 @@ EscribirUser MACRO
     CrearArchivo ArchivoRutaUsuarios,ArchivoHandler
     Registrarse
     CerrarArchivo ArchivoHandler
+    limpiar
     print msgRegistroCorrecto
     print salto 
+    MenUsuario
 ENDM 
 
 EscribirArchivoF MACRO arreglo

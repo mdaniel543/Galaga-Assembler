@@ -1,4 +1,3 @@
-INCLUDE mcr1.asm
 INCLUDE arch.asm
 INCLUDE user.asm
 INCLUDE admin.asm
@@ -8,22 +7,23 @@ INCLUDE main.asm
 .stack 
 .data 
     encabezado db "Universidad de San Carlos de Guatemala",10, 13, "Facultad de Ingenieria",10, 13, "Escuela de Ciencias y Sistemas",10, 13, "Arquitectura de Compiladores y ensambladores 1",10, 13, "Seccion A", 10, 13, "Marvin Daniel Rodriguez Felix", 10, 13, "201709450", 10, 13, "$"
-    opciones db 0ah, 0dh, '      MENU', 0ah, 0dh, 'F1. Login', 0ah, 0dh, 'F5. Register', 0ah, 0dh, 'F9. Exit', 0ah, 0dh, '$'
+    menuP db 0ah, 0dh, 'MENU', 0ah, 0dh, '$'
+    opciones db 0ah, 0dh, 'F1. Iniciar Sesion', 0ah, 0dh, 'F5. Registrar', 0ah, 0dh, 'F9. Salir', 0ah, 0dh, '$'
     salto db 10, 13, "$"
     var db 0, '$'
     msgErrorGeneral db 0ah,0dh,'Se ha cometido algun error de archivo','$'
 
     ;============ MENU PRINCIPAL =============
 
-    msglogin db 0ah, 0dh, 'LOGIN', 0ah, 0dh, '$'
-    msgLine db '=========================================', 0ah, 0dh, '$'
-    msgRegister db 0ah, 0dh, 'REGISTER', 0ah, 0dh, '$'
+    msglogin db 0ah, 0dh, 'INICIAR SESION', 0ah, 0dh, '$'
+    msgLine db '================================================', 0ah, 0dh, '$'
+    msgRegister db 0ah, 0dh, 'REGISTRO', 0ah, 0dh, '$'
     
     msgUsername db 0ah, 0dh, 'Username: ', '$'  
     msgPassword db 0ah, 0dh, 'Password: ', '$'  
 
-    bufferU db 30 dup('$')
-    bufferP db 30 dup('$')
+    bufferU db 30 dup('$'), '$'
+    bufferP db 30 dup('$'), '$'
 
     contadorSI dw 0, '$'
 
@@ -81,7 +81,38 @@ INCLUDE main.asm
     temp db 0, '$'
 
     ;=================== MENU USUARIO ===============
+    msgUsermenu db 0ah, 0dh, 'MENU DE USUARIO      USER: ', '$'
+    msgOpcionesUser db 0ah, 0dh, 'F2. Jugar ', 0ah, 0dh, 'F3. Mostrar el marcador de los 10 primeros', 0ah, 0dh, 'F5. Mostrar mi marcador de los 10 primeros', 0ah, 0dh, 'F9. Cerrar Sesion', 0ah, 0dh, '$'  
 
+    ;====================MENU ADMIN===================
+
+    msgAdminMenu db 0ah, 0dh, 'MENU ADMINISTRADOR      USER: ', '$'
+    msgOpcionesAG db 0ah, 0dh, 'F1. Debloquear Usuario ', 0ah, 0dh, 'F2. Ascender usuario a admin', 0ah, 0dh, 'F3. Descender admin a usuario', 0ah, 0dh, 'F5. Ordenamiento de burbuja', 0ah, 0dh, 'F6. Ordenamiento por monticulos', 0ah, 0dh, 'F7. TimSort', 0ah, 0dh, 'F9. Cerrar Sesion', 0ah, 0dh, '$'  
+    msgOpcionesA db 0ah, 0dh, 'F1. Debloquear Usuario ', 0ah, 0dh, 'F2. Mostrar el marcador de los 10 primeros', 0ah, 0dh, 'F3. Mostrar mi marcador de los 10 primeros', 0ah, 0dh, 'F4. Jugar', 0ah, 0dh, 'F5. Ordenamiento de burbuja', 0ah, 0dh, 'F6. Ordenamiento por monticulos', 0ah, 0dh, 'F7. TimSort', 0ah, 0dh, 'F9. Cerrar Sesion', 0ah, 0dh, '$'  
+
+    msgCerrarSession db 0ah, 0dh, '>> Sesion Cerrada con exito.... ', 0ah, 0dh, '$'
+
+
+    msgAdminUnlock db 0ah, 0dh, 'Desbloquear Usuario    USER: ', '$'
+    msgUnlock db 0ah, 0dh, 'Usuario a desbloquear: ', '$'
+    
+    msgUnlock1 db 0ah, 0dh, '>> Usuario desbloqueado correctamente        <<', '$'
+    msgUnlock2 db 0ah, 0dh, '>> ERROR, El Usuario no estaba bloqueado     <<', '$'
+
+    bufferUnlock db 30 dup('$'), '$'
+    bufferBan db 30 dup('$'), '$'
+
+    msgAscender  db 0ah, 0dh, 'Ascender a Admin    USER: ', '$'
+    msgAscender1 db 0ah, 0dh, 'Usuario para Ascender: ', '$'
+    
+    msgAscender2 db 0ah, 0dh, '>> Usuario Ascendido correctamente           <<', '$'
+    msgAscender3 db 0ah, 0dh, '>> ERROR, El Usuario ya es Admin             <<', '$'
+
+    msgDescender  db 0ah, 0dh, 'Descender a Usuario    USER: ', '$'
+    msgDescender1 db 0ah, 0dh, 'Usuario a descender: ', '$'
+    
+    msgDescender2 db 0ah, 0dh, '>> Usuario Desendido correctamente           <<', '$'
+    msgDescender3 db 0ah, 0dh, '>> ERROR, El Usuario no es Admin             <<', '$'
 
 
 .code 
@@ -97,6 +128,8 @@ main PROC
         jmp Inicio
     Menu:
         UserGal
+        print menuP
+        print msgLine
         print opciones
         getTecla
         cmp ah, 3Bh
@@ -107,12 +140,14 @@ main PROC
         je Exit
         jmp Menu
     Login:
+        limpiar
         print msglogin
         print msgLine
         Credenciales 00h
         ComprobarUsuario 
         jmp Menu
     Register:
+        limpiar
         print msgRegister
         print msgLine
         Credenciales 00h
