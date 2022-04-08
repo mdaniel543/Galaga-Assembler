@@ -203,7 +203,7 @@ LOCAL Inicio, contador30,ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
         mov bl,al
         mov ax,bx
         ConvertirString resultado
-        Delay2 800
+        Delay2 1000
         limpiar
         cmp cont, 0
         je ee

@@ -116,6 +116,19 @@ INCLUDE main.asm
 
     cont db 0, '$'
     resultado db 5 dup('$')
+
+    ;=================JUEGO===============
+    msgjuego1 db '- Usuario:', '$'
+    msgjuego2 db '- Nivel:', '$'
+    msgjuego3 db '- Punteo:', '$'
+    msgjuego4 db '- Tiempo:', '$'
+    msgjuego5 db '- Vidas:', '$'
+
+
+    level db 49, '$'
+    score db 48,48,48,48,48, '$'
+    time db 48,48,58,48,48,58,48,48, '$'
+
 .code 
 
 ;description
@@ -164,5 +177,21 @@ main PROC
 		int 21h
         		
 main ENDP
+
+DS_DATOS proc
+    push ax
+    mov ax, @data
+    mov ds,ax
+    pop ax
+    ret
+DS_DATOS endp
+
+DS_VIDEO proc
+    push ax
+    mov ax, 0A000h
+    mov ds, ax
+    pop ax
+    ret
+DS_VIDEO endp
 
 end main 
