@@ -43,8 +43,8 @@ INCLUDE main.asm
     msgUsuarioBloqueado db 0ah, 0dh, '>>  Usuario Bloqueado, Contacte con Administrador', 0ah, 0dh, '$'
     msg3intentos db 0ah, 0dh, '>>  Hubo 3 intentos fallidos', '$'
     
-    msgAdminPassE db 0ah, 0dh, '>> Porfavor espere: 30s', '$'
-    msgAdminPassE2 db ' e intente nuevamente', 0ah, 0dh,  '$'
+    msgAdminPassE db 0ah, 0dh, '>> Porfavor espere: ', '$'
+    msgAdminPassE2 db 's e intente nuevamente', 0ah, 0dh,  '$'
     
 
     msgValidaciones db 0ah, 0dh, '>>                       Accion Rechazada                             <<', '$'
@@ -114,7 +114,8 @@ INCLUDE main.asm
     msgDescender2 db 0ah, 0dh, '>> Usuario Desendido correctamente           <<', '$'
     msgDescender3 db 0ah, 0dh, '>> ERROR, El Usuario no es Admin             <<', '$'
 
-
+    cont db 0, '$'
+    resultado db 5 dup('$')
 .code 
 
 ;description

@@ -111,11 +111,12 @@ LOCAL
 ENDM
 
 ComprobarUsuario MACRO 
-LOCAL Inicio, ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
+LOCAL Inicio, contador30,ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
     Inicio: 
         xor di, di
         mov guardarDI, 0
         mov intentos, 0
+        mov cont, 31
     ;======== compruebo el nombre de usuario =============
     u0:
         xor si, si
@@ -194,14 +195,24 @@ LOCAL Inicio, ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
         mov al, temp
         cmp al, 48
         je normal
-        jne admin
+        jne contador30
     ; ================ si es admin solo hago un delay de 30s==========
-    admin:
+    contador30:
+        sub cont, 1
+        mov al, cont 
+        mov bl,al
+        mov ax,bx
+        ConvertirString resultado
+        Delay2 800
+        limpiar
+        cmp cont, 0
+        je ee
         print msg3intentos
         print msgAdminPassE
-        ;Contador30
+        print resultado
         print msgAdminPassE2
-        Delay2 7000
+        jmp contador30
+    ee:
         jmp u6c
     ; ============= si es normal bloqueo el usuario en el arreglo==========
     normal:
@@ -712,4 +723,44 @@ Delay2 MACRO constante
 	Fin_delay:
 	pop di
 	pop si
+ENDM
+
+ConvertirString MACRO buffer2
+Local Dividir,Dividir2,FinCr3,NEGATIVO,Final2,Final
+	xor si,si
+	xor cx,cx
+	xor bx,bx
+	xor dx,dx
+	mov dl,0ah
+	test ax,1000000000000000
+	jnz NEGATIVO
+	jmp Dividir2
+
+	NEGATIVO:
+	neg ax
+	mov buffer2[si],45
+	inc si
+	jmp Dividir2
+
+	Dividir:
+	xor ah,ah
+	Dividir2:
+	div dl
+	inc cx
+	push ax
+	cmp al,00h
+	je FinCr3
+	jmp Dividir
+
+	FinCr3:
+	pop ax
+	add ah,30h
+	mov buffer2[si],ah
+	inc si
+	loop FinCr3
+	mov ah,24h
+	mov buffer2[si],ah
+	inc si
+
+	Final:
 ENDM
