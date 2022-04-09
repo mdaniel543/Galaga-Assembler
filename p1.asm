@@ -142,8 +142,16 @@ INCLUDE main.asm
     contador4 dw 0, '$'
     contador5 dw 0, '$'
 
-    c1 dw ?, '$'
-    c2 dw ?, '$'
+    
+    nx dw ?, '$'
+    ny dw ?, '$'
+    
+    cIzqx dw ?, '$'
+    cIzqy dw ?, '$'
+    cCenx dw ?, '$'
+    cCeny dw ?, '$'
+    cDerx dw ?, '$'
+    cDery dw ?, '$'
 
 .code 
 

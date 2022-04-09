@@ -44,12 +44,97 @@ EmpiezaJuego MACRO
 
     FiguraCorazon 80d, 155d, 4d
 
-    mov c1, 202d
-    mov c2, 190d
+    ; ===================== pinto la nave del centro====================
+    mov nx, 202d
+    mov ny, 190d
 
-    PintarNave c1, c2 
+    PintarNave nx, ny 
 
-  
+    push bx
+    push cx
+    ;==============================cañon centro=====================
+    mov bx, nx
+    mov cx, ny
+
+    mov cCenx, bx
+    mov cCeny, cx
+
+    add cCenx, 7
+    sub cCeny, 12
+    
+    PintarCanon cCenx, cCeny
+
+    pop cx
+    pop bx
+
+    ;=========================temporal==============================
+    ;====================segunda nave de izquerda=============
+    mov nx, 177d
+    mov ny, 190d
+
+    PintarNave nx, ny 
+
+    push bx
+    push cx
+    ;==========================cañon izquierda=================
+    mov bx, nx
+    mov cx, ny
+
+    mov cIzqx, bx
+    mov cIzqy, cx 
+
+    sub cIzqy, 3 
+
+    PintarCanon cIzqx, cIzqy
+     ;==============================cañon centro=====================
+    mov cCenx, bx
+    mov cCeny, cx
+
+    add cCenx, 7
+    sub cCeny, 12
+    
+    PintarCanon cCenx, cCeny
+
+    pop cx
+    pop bx
+    ;======================tercera nave ================================
+    mov nx, 227d
+    mov ny, 190d
+
+    PintarNave nx, ny 
+
+    push bx
+    push cx
+     ;==========================cañon izquierda=================
+    mov bx, nx
+    mov cx, ny
+
+    mov cIzqx, bx
+    mov cIzqy, cx 
+
+    sub cIzqy, 3 
+
+    PintarCanon cIzqx, cIzqy
+     ;==============================cañon centro=====================
+    mov cCenx, bx
+    mov cCeny, cx
+
+    add cCenx, 7
+    sub cCeny, 12
+    
+    PintarCanon cCenx, cCeny
+    ;======================cañon derecha===================
+    mov cDerx, bx
+    mov cDery, cx
+
+    add cDerx, 14
+    sub cDery, 3
+
+    PintarCanon cDerx, cDery
+
+    pop cx
+    pop bx
+
 
     Delay2 6000
     ModoTexto
@@ -310,14 +395,17 @@ ENDM
 PintarNave MACRO x, abajo
 LOCAL e2, ciclo1, e1
     push si
+    push cx
 
-    mov contador4, abajo
+    mov cx, abajo
+    mov contador4, cx
 
     xor si, si
     mov si, x
-    mov auxnave2, x
 
-    mov auxnave, x
+    mov auxnave2, si
+
+    mov auxnave, si
     add auxnave, 15
 
     mov contador3, 0
@@ -349,8 +437,9 @@ LOCAL e2, ciclo1, e1
 
 
     ;==================puntos ROSJOS esquinas==========================
-    mov auxnave, x
-    mov auxnave2, abajo
+    mov si, x
+    mov auxnave, si
+    mov auxnave2, cx
 
     add auxnave, 3
     pintar_pixel auxnave2, auxnave, 4d 
@@ -360,7 +449,7 @@ LOCAL e2, ciclo1, e1
     pintar_pixel auxnave2, auxnave, 4d 
 
     dec auxnave2
-    mov auxnave, x
+    mov auxnave, si
     add auxnave, 3
     pintar_pixel auxnave2, auxnave, 4d 
     inc auxnave
@@ -383,7 +472,7 @@ LOCAL e2, ciclo1, e1
     pintar_pixel auxnave2, auxnave, 4d 
 
     inc auxnave2
-    mov auxnave, x
+    mov auxnave, si
     add auxnave, 8
     pintar_pixel auxnave2, auxnave, 4d 
     inc auxnave
@@ -392,34 +481,40 @@ LOCAL e2, ciclo1, e1
     pintar_pixel auxnave2, auxnave, 4d 
 
     ;===================puntos rojos centro=================
-    mov auxnave, x
-    mov auxnave2, abajo
+    mov auxnave, si
+    mov auxnave2, cx
 
     sub auxnave2, 4
 
-    add auxnave, 6
+    add auxnave, 5
     pintar_pixel auxnave2, auxnave, 4d 
-    inc auxnave
-    inc auxnave
+    add auxnave, 3
     pintar_pixel auxnave2, auxnave, 4d 
     
     dec auxnave2 
-    mov auxnave, x
-    add auxnave, 6
+    mov auxnave, si
+    add auxnave, 5
 
+    pintar_pixel auxnave2, auxnave, 4d 
+    inc auxnave
     pintar_pixel auxnave2, auxnave, 4d 
     inc auxnave
     pintar_pixel auxnave2, auxnave, 4d 
     inc auxnave
     pintar_pixel auxnave2, auxnave, 4d 
    
+    pop cx
     pop si
 ENDM
 
 PintarCanon MACRO x, abajo
 LOCAL 
     push si
-    lea auxnave2, abajo
+    push cx
+
+    xor cx, cx 
+    mov cx, abajo
+    mov auxnave2, cx
 
     pintar_pixel auxnave2, x, 9d
     dec auxnave2
@@ -429,7 +524,10 @@ LOCAL
     dec auxnave2
     pintar_pixel auxnave2, x, 6d
     dec auxnave2
+    
+    pop cx
     pop si
+
 ENDM
 
 
