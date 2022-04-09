@@ -694,17 +694,6 @@ LOCAL e0, e1, e2
         print salto 
 ENDM
 
-delay MACRO numero
-LOCAL startD, endDelay
-	mov cx, 1
-	startD:
-	cmp cx, numero
-	je endDelay
-	inc cx
-	jmp startD
-	endDelay:
-ENDM
-
 Delay2 MACRO constante
 	LOCAL D1,D2,Fin_delay
 	push si

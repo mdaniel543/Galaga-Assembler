@@ -118,16 +118,32 @@ INCLUDE main.asm
     resultado db 5 dup('$')
 
     ;=================JUEGO===============
-    msgjuego1 db '- Usuario:', '$'
-    msgjuego2 db '- Nivel:', '$'
-    msgjuego3 db '- Punteo:', '$'
-    msgjuego4 db '- Tiempo:', '$'
-    msgjuego5 db '- Vidas:', '$'
+    msgjuego1 db '-Usuario:', '$'
+    msgjuego2 db '-Nivel:', '$'
+    msgjuego3 db '-Punteo:', '$'
+    msgjuego4 db '-Tiempo:', '$'
+    msgjuego5 db '-Vidas:', '$'
 
 
     level db 49, '$'
     score db 48,48,48,48,48, '$'
     time db 48,48,58,48,48,58,48,48, '$'
+
+    auxcora  dw 0, '$'
+    auxcoro1 dw 0, '$'
+    auxcoro2 dw 0, '$'
+
+    contador1 dw 0, '$'
+    contador2 dw 0, '$'
+
+    auxnave dw 0, '$'
+    auxnave2 dw 0, '$'
+    contador3 dw 0, '$'
+    contador4 dw 0, '$'
+    contador5 dw 0, '$'
+
+    c1 dw ?, '$'
+    c2 dw ?, '$'
 
 .code 
 
