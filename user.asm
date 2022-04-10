@@ -43,100 +43,11 @@ EmpiezaJuego MACRO
     FiguraCorazon 60d, 155d, 4d
 
     FiguraCorazon 80d, 155d, 4d
-
-    ; ===================== pinto la nave del centro====================
-    mov nx, 202d
-    mov ny, 190d
-
-    PintarNave nx, ny 
-
-    push bx
-    push cx
-    ;==============================cañon centro=====================
-    mov bx, nx
-    mov cx, ny
-
-    mov cCenx, bx
-    mov cCeny, cx
-
-    add cCenx, 7
-    sub cCeny, 12
-    
-    PintarCanon cCenx, cCeny
-
-    pop cx
-    pop bx
-
-    ;=========================temporal==============================
-    ;====================segunda nave de izquerda=============
-    mov nx, 177d
-    mov ny, 190d
-
-    PintarNave nx, ny 
-
-    push bx
-    push cx
-    ;==========================cañon izquierda=================
-    mov bx, nx
-    mov cx, ny
-
-    mov cIzqx, bx
-    mov cIzqy, cx 
-
-    sub cIzqy, 3 
-
-    PintarCanon cIzqx, cIzqy
-     ;==============================cañon centro=====================
-    mov cCenx, bx
-    mov cCeny, cx
-
-    add cCenx, 7
-    sub cCeny, 12
-    
-    PintarCanon cCenx, cCeny
-
-    pop cx
-    pop bx
-    ;======================tercera nave ================================
-    mov nx, 227d
-    mov ny, 190d
-
-    PintarNave nx, ny 
-
-    push bx
-    push cx
-     ;==========================cañon izquierda=================
-    mov bx, nx
-    mov cx, ny
-
-    mov cIzqx, bx
-    mov cIzqy, cx 
-
-    sub cIzqy, 3 
-
-    PintarCanon cIzqx, cIzqy
-     ;==============================cañon centro=====================
-    mov cCenx, bx
-    mov cCeny, cx
-
-    add cCenx, 7
-    sub cCeny, 12
-    
-    PintarCanon cCenx, cCeny
-    ;======================cañon derecha===================
-    mov cDerx, bx
-    mov cDery, cx
-
-    add cDerx, 14
-    sub cDery, 3
-
-    PintarCanon cDerx, cDery
-
-    pop cx
-    pop bx
-
+    ;====pinto el nivel 1=====
+    Inicio_Nivel1
 
     Delay2 6000
+
     ModoTexto
 ENDM
 
@@ -392,11 +303,252 @@ LOCAL ciclo1, ciclo2, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, ciclo3, ciclo4, c
     pop si
 ENDM
 
-PintarNave MACRO x, abajo
+Inicio_Nivel1 MACRO
+LOCAL e1, e2, e3, e5
+    ; ===================== pinto la nave del centro====================
+    mov nx, 202d
+    mov ny, 190d
+
+    PintarNave nx, ny, 15d
+    pintar_nave_detalles nx, ny, 4d
+
+    push bx
+    push cx
+    ;==============================cañon centro=====================
+    xor bx, bx
+    xor cx, cx
+    
+    mov bx, nx
+    mov cx, ny
+
+    mov cCenx, bx
+    mov cCeny, cx
+
+    add cCenx, 7
+    sub cCeny, 12
+    
+    PintarCanon cCenx, cCeny
+
+    pop cx
+    pop bx
+    ;===============================enemigos=========================
+    
+    mov contaux1, 10d ; suplantar el 10d cuando se mueva 
+    mov oaux3, 0
+
+    e5:
+        inc oaux3
+
+        mov contaux2, 115d
+        mov contaux, 0
+        
+        e1:
+            inc contaux
+            Dibujar_enemigo contaux2, contaux1, 1d 
+            add contaux2, 30
+            cmp contaux, 7
+        jne e1
+
+        add contaux1, 16
+        mov contaux2, 115d
+        mov contaux, 0
+        
+        e2:
+            inc contaux
+            Dibujar_enemigo contaux2, contaux1, 2d 
+            add contaux2, 30
+            cmp contaux, 7
+        jne e2
+
+        add contaux1, 16
+        mov contaux2, 115d
+        mov contaux, 0
+        
+        e3:
+            inc contaux
+            Dibujar_enemigo contaux2, contaux1, 14d 
+            add contaux2, 30
+            cmp contaux, 7
+        jne e3
+
+        add contaux1, 16
+        cmp oaux3, 1
+    jne e5
+
+ENDM
+
+
+Inicio_Nivel2 MACRO
+LOCAL e1, e2, e3, e5
+     ;====================segunda nave de izquerda=============
+    mov nx, 202d
+    mov ny, 190d
+
+    PintarNave nx, ny, 15d
+    pintar_nave_detalles nx, ny, 4d
+
+    push bx
+    push cx
+    ;==========================cañon izquierda=================
+    mov bx, nx
+    mov cx, ny
+
+    mov cIzqx, bx
+    mov cIzqy, cx 
+
+    sub cIzqy, 3 
+
+    PintarCanon cIzqx, cIzqy
+     ;==============================cañon centro=====================
+    mov cCenx, bx
+    mov cCeny, cx
+
+    add cCenx, 7
+    sub cCeny, 12
+    
+    PintarCanon cCenx, cCeny
+
+    pop cx
+    pop bx
+    ;=====================enemigos==============================
+
+
+    mov contaux1, 10d ; suplantar el 10d cuando se mueva 
+    mov oaux3, 0
+
+    e5:
+        inc oaux3
+
+        mov contaux2, 115d
+        mov contaux, 0
+        
+        e1:
+            inc contaux
+            Dibujar_enemigo contaux2, contaux1, 1d 
+            add contaux2, 30
+            cmp contaux, 7
+        jne e1
+
+        add contaux1, 16
+        mov contaux2, 115d
+        mov contaux, 0
+        
+        e2:
+            inc contaux
+            Dibujar_enemigo contaux2, contaux1, 2d 
+            add contaux2, 30
+            cmp contaux, 7
+        jne e2
+
+        add contaux1, 16
+        mov contaux2, 115d
+        mov contaux, 0
+        
+        e3:
+            inc contaux
+            Dibujar_enemigo contaux2, contaux1, 14d 
+            add contaux2, 30
+            cmp contaux, 7
+        jne e3
+
+        add contaux1, 16
+        cmp oaux3, 2
+    jne e5
+
+ENDM
+
+
+Inicio_Nivel3 MACRO
+LOCAL e1, e2, e3, e5
+    mov nx, 202d
+    mov ny, 190d
+
+    PintarNave nx, ny, 15d
+    pintar_nave_detalles nx, ny, 4d
+
+    push bx
+    push cx
+     ;==========================cañon izquierda=================
+    mov bx, nx
+    mov cx, ny
+
+    mov cIzqx, bx
+    mov cIzqy, cx 
+
+    sub cIzqy, 3 
+
+    PintarCanon cIzqx, cIzqy
+     ;==============================cañon centro=====================
+    mov cCenx, bx
+    mov cCeny, cx
+
+    add cCenx, 7
+    sub cCeny, 12
+    
+    PintarCanon cCenx, cCeny
+    ;======================cañon derecha===================
+    mov cDerx, bx
+    mov cDery, cx
+
+    add cDerx, 14
+    sub cDery, 3
+
+    PintarCanon cDerx, cDery
+
+    pop cx
+    pop bx
+    ; ======================enemigos================
+    mov contaux1, 10d ; suplantar el 10d cuando se mueva 
+    mov oaux3, 0
+
+    e5:
+        inc oaux3
+
+        mov contaux2, 115d
+        mov contaux, 0
+        
+        e1:
+            inc contaux
+            Dibujar_enemigo contaux2, contaux1, 1d 
+            add contaux2, 30
+            cmp contaux, 7
+        jne e1
+
+        add contaux1, 16
+        mov contaux2, 115d
+        mov contaux, 0
+        
+        e2:
+            inc contaux
+            Dibujar_enemigo contaux2, contaux1, 2d 
+            add contaux2, 30
+            cmp contaux, 7
+        jne e2
+
+        add contaux1, 16
+        mov contaux2, 115d
+        mov contaux, 0
+        
+        e3:
+            inc contaux
+            Dibujar_enemigo contaux2, contaux1, 14d 
+            add contaux2, 30
+            cmp contaux, 7
+        jne e3
+
+        add contaux1, 16
+        cmp oaux3, 3
+    jne e5
+
+
+ENDM 
+
+PintarNave MACRO x, abajo, color 
 LOCAL e2, ciclo1, e1
     push si
     push cx
 
+    xor cx, cx
     mov cx, abajo
     mov contador4, cx
 
@@ -417,7 +569,7 @@ LOCAL e2, ciclo1, e1
             inc contador5
             mov si, auxnave2
             ciclo1:
-                pintar_pixel contador4, si, 15d 
+                pintar_pixel contador4, si, color 
                 inc si 
                 cmp si, auxnave
             jne ciclo1
@@ -435,50 +587,62 @@ LOCAL e2, ciclo1, e1
         cmp contador3, 4
     jne e2
 
+    pop cx
+    pop si
+ENDM
 
+pintar_nave_detalles MACRO x, abajo, color
+LOCAL 
+    push si
+    push cx
     ;==================puntos ROSJOS esquinas==========================
+    xor si, si
+    xor cx, cx
+    
     mov si, x
+    mov cx, abajo
+
     mov auxnave, si
     mov auxnave2, cx
 
     add auxnave, 3
-    pintar_pixel auxnave2, auxnave, 4d 
+    pintar_pixel auxnave2, auxnave, color 
     inc auxnave
-    pintar_pixel auxnave2, auxnave, 4d 
+    pintar_pixel auxnave2, auxnave, color 
     inc auxnave
-    pintar_pixel auxnave2, auxnave, 4d 
+    pintar_pixel auxnave2, auxnave, color 
 
     dec auxnave2
     mov auxnave, si
     add auxnave, 3
-    pintar_pixel auxnave2, auxnave, 4d 
+    pintar_pixel auxnave2, auxnave, color 
     inc auxnave
-    pintar_pixel auxnave2, auxnave, 4d 
+    pintar_pixel auxnave2, auxnave, color 
     inc auxnave
-    pintar_pixel auxnave2, auxnave, 4d 
+    pintar_pixel auxnave2, auxnave, color 
 
     dec auxnave2
-    pintar_pixel auxnave2, auxnave, 4d 
+    pintar_pixel auxnave2, auxnave, color 
 
 
     add auxnave, 3
-    pintar_pixel auxnave2, auxnave, 4d 
+    pintar_pixel auxnave2, auxnave, color 
 
     inc auxnave2
-    pintar_pixel auxnave2, auxnave, 4d 
+    pintar_pixel auxnave2, auxnave, color 
     inc auxnave
-    pintar_pixel auxnave2, auxnave, 4d 
+    pintar_pixel auxnave2, auxnave, color 
     inc auxnave
-    pintar_pixel auxnave2, auxnave, 4d 
+    pintar_pixel auxnave2, auxnave, color 
 
     inc auxnave2
     mov auxnave, si
     add auxnave, 8
-    pintar_pixel auxnave2, auxnave, 4d 
+    pintar_pixel auxnave2, auxnave, color 
     inc auxnave
-    pintar_pixel auxnave2, auxnave, 4d 
+    pintar_pixel auxnave2, auxnave, color 
     inc auxnave
-    pintar_pixel auxnave2, auxnave, 4d 
+    pintar_pixel auxnave2, auxnave, color 
 
     ;===================puntos rojos centro=================
     mov auxnave, si
@@ -487,22 +651,22 @@ LOCAL e2, ciclo1, e1
     sub auxnave2, 4
 
     add auxnave, 5
-    pintar_pixel auxnave2, auxnave, 4d 
+    pintar_pixel auxnave2, auxnave, color 
     add auxnave, 3
-    pintar_pixel auxnave2, auxnave, 4d 
+    pintar_pixel auxnave2, auxnave, color 
     
     dec auxnave2 
     mov auxnave, si
     add auxnave, 5
 
-    pintar_pixel auxnave2, auxnave, 4d 
+    pintar_pixel auxnave2, auxnave, color 
     inc auxnave
-    pintar_pixel auxnave2, auxnave, 4d 
+    pintar_pixel auxnave2, auxnave, color 
     inc auxnave
-    pintar_pixel auxnave2, auxnave, 4d 
+    pintar_pixel auxnave2, auxnave, color 
     inc auxnave
-    pintar_pixel auxnave2, auxnave, 4d 
-   
+    pintar_pixel auxnave2, auxnave, color 
+
     pop cx
     pop si
 ENDM
@@ -530,6 +694,91 @@ LOCAL
 
 ENDM
 
+Dibujar_enemigo MACRO x, y, color
+LOCAL e2, ciclo1, e1
+    push si
+    push cx
+
+    xor cx, cx
+    mov cx, y
+    mov contador4, cx
+
+    xor si, si
+    mov si, x
+
+    mov auxnave2, si
+
+    mov auxnave, si
+    add auxnave, 8
+
+    mov contador3, 0
+    mov contador5, 0
+
+    e2:
+        inc contador3
+        e1:
+            inc contador5
+            mov si, auxnave2
+            ciclo1:
+                pintar_pixel contador4, si, color 
+                inc si 
+                cmp si, auxnave
+            jne ciclo1
+            inc contador4
+            cmp contador5, 2
+        jne e1
+
+        mov contador5, 0
+
+        add auxnave2, 1
+        mov si, auxnave2
+
+        sub auxnave, 1
+
+        cmp contador3, 4
+    jne e2
+
+    xor cx, cx
+    xor si, si
+    
+    mov cx, y
+    mov oaux, cx
+    mov si, x
+    mov oaux2, si
+
+    add oaux, 2
+
+    add oaux2, 2
+    pintar_pixel oaux, oaux2, 0d
+    add oaux2, 1
+    pintar_pixel oaux, oaux2, color
+    add oaux2, 1
+    pintar_pixel oaux, oaux2, color
+
+    add oaux, 1
+    mov oaux2, si
+
+    add oaux2, 2
+    pintar_pixel oaux, oaux2, 0d
+    add oaux2, 1
+    pintar_pixel oaux, oaux2, color
+    add oaux2, 1
+    pintar_pixel oaux, oaux2, color
+    
+
+    add oaux, 2
+    mov oaux2, si
+    add oaux2, 2
+    pintar_pixel oaux, oaux2, color
+    add oaux2, 2
+    pintar_pixel oaux, oaux2, 0d
+    add oaux2, 1
+    pintar_pixel oaux, oaux2, color
+
+    pop cx
+    pop si
+
+ENDM
 
 delay MACRO param   
 LOCAL ret1, ret2, finRet

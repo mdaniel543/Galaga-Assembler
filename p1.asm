@@ -153,6 +153,13 @@ INCLUDE main.asm
     cDerx dw ?, '$'
     cDery dw ?, '$'
 
+    contaux dw 0, '$'
+    contaux1 dw 0, '$'
+    contaux2 dw 0, '$'
+    oaux dw 0, '$'
+    oaux2 dw 0, '$'
+    oaux3 dw 0, '$'
+
 .code 
 
 ;description
