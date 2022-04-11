@@ -160,6 +160,8 @@ INCLUDE main.asm
     oaux2 dw 0, '$'
     oaux3 dw 0, '$'
 
+    banderaTerminaJuego db 00h, '$'
+
 .code 
 
 ;description

@@ -32,6 +32,7 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9
 ENDM 
 
 EmpiezaJuego MACRO 
+LOCAL e1, e2, e3 
     limpiar
     ModoGrafico
     DatosMostrados
@@ -46,8 +47,18 @@ EmpiezaJuego MACRO
     ;====pinto el nivel 1=====
     Inicio_Nivel1
 
-    Delay2 6000
+    e1:
+        getChar
+        cmp al, 27
+        je e3
+        cmp al, 32
+        je e2
+    jmp e1
 
+    e2:
+        Inicio_Tiempo
+        Delay2 3000
+    e3:
     ModoTexto
 ENDM
 
@@ -303,6 +314,234 @@ LOCAL ciclo1, ciclo2, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, ciclo3, ciclo4, c
     pop si
 ENDM
 
+Inicio_Tiempo MACRO 
+LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10
+    mov time[7], 48
+    mov time[6], 48
+    mov time[4], 48
+    mov time[3], 48
+    mov time[1], 48
+    mov time[0], 48
+    e1:
+        cmp banderaTerminaJuego, 01h
+        je e10
+
+        delay 175
+
+        xor ax, ax
+        mov ah, 02h
+        mov bh, 00h
+        mov dh, 15d ;23 fil
+        mov dl, 2d ;118 col
+        int 10h
+        call DS_DATOS ;Cambia de DS al lugar de las variables
+
+        
+        mov al, time[7]
+
+        cmp al, 57
+        je e5
+
+        add al, 1
+        mov time[7], al
+        jmp e2
+
+        e5:
+            mov time[7], 48
+            
+            mov al, time[6]
+            add al, 1
+            mov time[6], al
+            
+            cmp al, 54
+            je e3
+
+        e2:
+        print time
+        call DS_VIDEO ;Cambio de DS a memoria de video
+        Mover
+    jmp e1
+
+    e3:
+        delay 100
+
+        call DS_VIDEO ;Cambio de DS a memoria de video
+
+        xor ax, ax
+        mov ah, 02h
+        mov bh, 00h
+        mov dh, 15d ;23 fil
+        mov dl, 2d ;118 col
+        int 10h
+        call DS_DATOS ;Cambia de DS al lugar de las variables
+
+        mov time[7], 48
+        mov time[6], 48
+
+        mov al, time[4]
+
+        cmp al, 57
+        je e7
+
+        add al, 1
+        mov time[4], al
+        jmp e4
+
+        e7:
+            mov time[4], 48
+            
+            mov al, time[3]
+            add al, 1
+            mov time[3], al
+            
+            cmp al, 54
+            je e6   
+        e4:
+        print time
+        call DS_VIDEO ;Cambio de DS a memoria de video
+        Mover
+    jmp e1
+
+    e6:
+        delay 100
+
+        call DS_VIDEO ;Cambio de DS a memoria de video
+
+        xor ax, ax
+        mov ah, 02h
+        mov bh, 00h
+        mov dh, 15d ;23 fil
+        mov dl, 2d ;118 col
+        int 10h
+        call DS_DATOS ;Cambia de DS al lugar de las variables
+
+        mov time[4], 48
+        mov time[3], 48
+
+        mov al, time[1]
+
+        cmp al, 57
+        je e9
+
+        add al, 1
+        mov time[1], al
+        jmp e8
+
+        e9:
+            mov time[1], 48
+            
+            mov al, time[0]
+            add al, 1
+            mov time[0], al
+            
+            cmp al, 54
+            je e10  
+        e8:
+        print time
+        call DS_VIDEO ;Cambio de DS a memoria de video
+        Mover
+    jmp e1
+
+    e10:
+ENDM
+
+Mover MACRO 
+LOCAL Izquierda, Derecha, sigue, Pausa, pe, lev
+	mov ah,01h
+	int 16h
+	cmp al,97
+	je Izquierda
+	cmp al,100
+	je Derecha
+    cmp al, 27
+    je Pausa
+    jmp sigue
+    Izquierda:
+        Movimiento_Nivel1 00h
+        mov ah, 00h
+        int 16h
+        jmp sigue
+    Derecha:    
+        Movimiento_Nivel1 01h
+        mov ah, 00h
+        int 16h
+        jmp sigue
+    Pausa:
+        mov ah, 00h
+        int 16h
+    pe:
+        mov ah, 00h
+	    int 16h
+        cmp al, 32 
+        je sigue
+        cmp al, 27
+        je lev
+    jne pe
+    lev: 
+        mov banderaTerminaJuego, 01h
+    sigue:
+    
+ENDM
+
+Movimiento_Nivel1 MACRO direccion
+LOCAL i, d, m
+    PintarNave nx, ny, 0d
+    pintar_nave_detalles nx, ny, 0d
+
+    push bx
+    push cx
+    ;==============================cañon centro=====================
+    xor bx, bx
+    xor cx, cx
+    
+    mov bx, nx
+    mov cx, ny
+
+    mov cCenx, bx
+    mov cCeny, cx
+
+    add cCenx, 7
+    sub cCeny, 12
+    
+    PintarCanon cCenx, cCeny, 01h
+
+    pop cx
+    pop bx
+    
+    mov al, direccion
+    cmp al, 01h
+    je d
+    i:
+        sub nx, 1
+        jmp m
+    d:
+        add nx, 1
+    m:
+
+        PintarNave nx, ny, 15d
+        pintar_nave_detalles nx, ny, 4d
+
+        push bx
+        push cx
+        ;==============================cañon centro=====================
+        xor bx, bx
+        xor cx, cx
+        
+        mov bx, nx
+        mov cx, ny
+
+        mov cCenx, bx
+        mov cCeny, cx
+
+        add cCenx, 7
+        sub cCeny, 12
+        
+        PintarCanon cCenx, cCeny, 00h
+
+        pop cx
+        pop bx
+ENDM
+
 Inicio_Nivel1 MACRO
 LOCAL e1, e2, e3, e5
     ; ===================== pinto la nave del centro====================
@@ -327,7 +566,7 @@ LOCAL e1, e2, e3, e5
     add cCenx, 7
     sub cCeny, 12
     
-    PintarCanon cCenx, cCeny
+    PintarCanon cCenx, cCeny, 00h
 
     pop cx
     pop bx
@@ -398,7 +637,7 @@ LOCAL e1, e2, e3, e5
 
     sub cIzqy, 3 
 
-    PintarCanon cIzqx, cIzqy
+    PintarCanon cIzqx, cIzqy, 00h
      ;==============================cañon centro=====================
     mov cCenx, bx
     mov cCeny, cx
@@ -406,7 +645,7 @@ LOCAL e1, e2, e3, e5
     add cCenx, 7
     sub cCeny, 12
     
-    PintarCanon cCenx, cCeny
+    PintarCanon cCenx, cCeny, 00h
 
     pop cx
     pop bx
@@ -477,7 +716,7 @@ LOCAL e1, e2, e3, e5
 
     sub cIzqy, 3 
 
-    PintarCanon cIzqx, cIzqy
+    PintarCanon cIzqx, cIzqy, 00h
      ;==============================cañon centro=====================
     mov cCenx, bx
     mov cCeny, cx
@@ -485,7 +724,7 @@ LOCAL e1, e2, e3, e5
     add cCenx, 7
     sub cCeny, 12
     
-    PintarCanon cCenx, cCeny
+    PintarCanon cCenx, cCeny, 00h
     ;======================cañon derecha===================
     mov cDerx, bx
     mov cDery, cx
@@ -493,7 +732,7 @@ LOCAL e1, e2, e3, e5
     add cDerx, 14
     sub cDery, 3
 
-    PintarCanon cDerx, cDery
+    PintarCanon cDerx, cDery, 00h
 
     pop cx
     pop bx
@@ -671,14 +910,19 @@ LOCAL
     pop si
 ENDM
 
-PintarCanon MACRO x, abajo
-LOCAL 
+PintarCanon MACRO x, abajo, despintar
+LOCAL e0, e1
     push si
     push cx
 
     xor cx, cx 
     mov cx, abajo
     mov auxnave2, cx
+
+    mov al, despintar
+    
+    cmp al, 01h
+    je e0
 
     pintar_pixel auxnave2, x, 9d
     dec auxnave2
@@ -689,6 +933,20 @@ LOCAL
     pintar_pixel auxnave2, x, 6d
     dec auxnave2
     
+    jmp e1
+
+    e0:
+        pintar_pixel auxnave2, x, 0d
+        dec auxnave2
+        pintar_pixel auxnave2, x, 0d 
+        dec auxnave2
+        pintar_pixel auxnave2, x, 0d
+        dec auxnave2
+        pintar_pixel auxnave2, x, 0d
+        dec auxnave2
+
+
+    e1:
     pop cx
     pop si
 
