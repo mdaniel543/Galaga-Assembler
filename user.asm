@@ -17,6 +17,7 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9
         je e5
         jmp e1
     e2:
+        mov banderaTerminaJuego, 00h
         EmpiezaJuego
         jmp e1
     e3:
@@ -34,10 +35,21 @@ ENDM
 EmpiezaJuego MACRO 
 LOCAL e1, e2, e3 
     limpiar
+
+    mov time[7], 48
+    mov time[6], 48
+    mov time[4], 48
+    mov time[3], 48
+    mov time[1], 48
+    mov time[0], 48
+
     ModoGrafico
+
     DatosMostrados
     ; filas 199, columnas 319
     pintar_linea 100d, 0d, 199d, 9d 
+
+    Call DS_DATOS
 
     FiguraCorazon 40d, 155d, 4d
 
@@ -45,6 +57,8 @@ LOCAL e1, e2, e3
 
     FiguraCorazon 80d, 155d, 4d
     ;====pinto el nivel 1=====
+    LLenarArreglo enemigos_nivel1
+
     Inicio_Nivel1
 
     e1:
@@ -56,8 +70,26 @@ LOCAL e1, e2, e3
     jmp e1
 
     e2:
+        xor ax, ax
+	    mov ah, 02h
+	    mov bh, 00h
+	    mov dh, 22d ;23 fil
+	    mov dl, 0d ;118 col
+	    int 10h
+	    call DS_DATOS ;Cambia de DS al lugar de las variables
+        print limpia1
+        call DS_VIDEO ;Cambio de DS a memoria de video
+
+        xor ax, ax
+	    mov ah, 02h
+	    mov bh, 00h
+	    mov dh, 22d ;23 fil
+	    mov dl, 0d ;118 col
+	    int 10h
+	    call DS_DATOS ;Cambia de DS al lugar de las variables
+	    print msg_esc1
+
         Inicio_Tiempo
-        Delay2 3000
     e3:
     ModoTexto
 ENDM
@@ -154,6 +186,15 @@ DatosMostrados MACRO
 	print msgjuego5
     call DS_VIDEO ;Cambio de DS a memoria de video
 
+    xor ax, ax
+	mov ah, 02h
+	mov bh, 00h
+	mov dh, 22d ;23 fil
+	mov dl, 0d ;118 col
+	int 10h
+	call DS_DATOS ;Cambia de DS al lugar de las variables
+	print msg_start1
+    call DS_VIDEO ;Cambio de DS a memoria de video
 
 ENDM
 
@@ -186,10 +227,12 @@ pintar_pixel MACRO i, j, color
     mul bx
     add ax, j
     mov di, ax
+    call DS_VIDEO
     mov [di], color
     pop di
     pop bx
     pop ax
+    call DS_DATOS
 ENDM
 
 
@@ -203,6 +246,15 @@ LOCAL ciclo1, ciclo2
         inc si
         cmp si, aba
     jne ciclo2
+    pop si 
+    push si 
+    xor si, si 
+    mov si, 0
+    ciclo1: 
+        pintar_pixel 170d, si, color 
+        inc si
+        cmp si, izq
+    jne ciclo1
     pop si
 ENDM
 
@@ -316,18 +368,13 @@ ENDM
 
 Inicio_Tiempo MACRO 
 LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10
-    mov time[7], 48
-    mov time[6], 48
-    mov time[4], 48
-    mov time[3], 48
-    mov time[1], 48
-    mov time[0], 48
     e1:
         cmp banderaTerminaJuego, 01h
         je e10
 
         delay 175
 
+        call DS_VIDEO ;Cambio de DS a memoria de video
         xor ax, ax
         mov ah, 02h
         mov bh, 00h
@@ -336,7 +383,6 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10
         int 10h
         call DS_DATOS ;Cambia de DS al lugar de las variables
 
-        
         mov al, time[7]
 
         cmp al, 57
@@ -355,10 +401,9 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10
             
             cmp al, 54
             je e3
-
         e2:
         print time
-        call DS_VIDEO ;Cambio de DS a memoria de video
+        Bajar_Enemigos
         Mover
     jmp e1
 
@@ -398,7 +443,6 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10
             je e6   
         e4:
         print time
-        call DS_VIDEO ;Cambio de DS a memoria de video
         Mover
     jmp e1
 
@@ -438,7 +482,6 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10
             je e10  
         e8:
         print time
-        call DS_VIDEO ;Cambio de DS a memoria de video
         Mover
     jmp e1
 
@@ -446,7 +489,7 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10
 ENDM
 
 Mover MACRO 
-LOCAL Izquierda, Derecha, sigue, Pausa, pe, lev
+LOCAL Izquierda, Derecha, sigue, Pausa, pe, lev, cambialetras
 	mov ah,01h
 	int 16h
 	cmp al,97
@@ -469,16 +512,79 @@ LOCAL Izquierda, Derecha, sigue, Pausa, pe, lev
     Pausa:
         mov ah, 00h
         int 16h
+        
+        call DS_VIDEO ;Cambio de DS a memoria de video
+        xor ax, ax
+	    mov ah, 02h
+	    mov bh, 00h
+	    mov dh, 22d ;23 fil
+	    mov dl, 0d ;118 col
+	    int 10h
+	    call DS_DATOS ;Cambia de DS al lugar de las variables
+        print limpia1
+        call DS_VIDEO ;Cambio de DS a memoria de video
+
+        xor ax, ax
+	    mov ah, 02h
+	    mov bh, 00h
+	    mov dh, 22d ;23 fil
+	    mov dl, 0d ;118 col
+	    int 10h
+	    call DS_DATOS ;Cambia de DS al lugar de las variables
+	    print msg_start2
+        call DS_VIDEO ;Cambio de DS a memoria de video
+
+        xor ax, ax
+	    mov ah, 02h
+	    mov bh, 00h
+	    mov dh, 23d ;23 fil
+	    mov dl, 0d ;118 col
+	    int 10h
+	    call DS_DATOS ;Cambia de DS al lugar de las variables
+	    print msg_esc2
+
     pe:
         mov ah, 00h
 	    int 16h
         cmp al, 32 
-        je sigue
+        je cambialetras
         cmp al, 27
         je lev
     jne pe
     lev: 
         mov banderaTerminaJuego, 01h
+        jmp sigue
+    cambialetras:
+        call DS_VIDEO ;Cambio de DS a memoria de video
+        xor ax, ax
+	    mov ah, 02h
+	    mov bh, 00h
+	    mov dh, 22d ;23 fil
+	    mov dl, 0d ;118 col
+	    int 10h
+	    call DS_DATOS ;Cambia de DS al lugar de las variables
+        print limpia1
+        call DS_VIDEO ;Cambio de DS a memoria de video
+
+        xor ax, ax
+	    mov ah, 02h
+	    mov bh, 00h
+	    mov dh, 22d ;23 fil
+	    mov dl, 0d ;118 col
+	    int 10h
+	    call DS_DATOS ;Cambia de DS al lugar de las variables
+	    print msg_esc1
+        call DS_VIDEO ;Cambio de DS a memoria de video
+
+        xor ax, ax
+	    mov ah, 02h
+	    mov bh, 00h
+	    mov dh, 23d ;23 fil
+	    mov dl, 0d ;118 col
+	    int 10h
+	    call DS_DATOS ;Cambia de DS al lugar de las variables
+	    print limpia1
+    
     sigue:
     
 ENDM
@@ -517,7 +623,6 @@ LOCAL i, d, m
     d:
         add nx, 1
     m:
-
         PintarNave nx, ny, 15d
         pintar_nave_detalles nx, ny, 4d
 
@@ -541,6 +646,100 @@ LOCAL i, d, m
         pop cx
         pop bx
 ENDM
+
+Bajar_Enemigos MACRO
+LOCAL e1, e2, e3, e4, e5, busco, select
+    push ax
+    push si
+    xor ax, ax
+    xor si, si
+    mov cote1, 0
+    mov si, 0
+
+    busco:
+        mov al, enemigos_nivel1[si]
+        cmp al, 47
+        je e4
+        cmp al, 49
+        je select 
+        inc cote1
+        inc si
+    jmp busco
+
+    select:
+        ;empiezo obteniendo la altura donde esta la nave 
+        cmp cote1, 6
+        ja e1 
+        ; posicion horizontal
+        inc cote1
+
+        mov al, 30d
+        mul cote1
+        mov cote2, ax
+        add cote2, 85d 
+
+        mov contaux1, 42d  
+
+        Dibujar_enemigo cote2, contaux1, 0d
+
+        delay 500
+    jmp e3 ; temporal
+    e1:
+        cmp cote1, 13
+        ja e2
+
+        sub cote1, 6d
+
+        mov al, 30d
+        mul cote1
+        mov cote2, ax
+        add cote2, 85d 
+
+        mov contaux1, 26d  
+
+        Dibujar_enemigo cote2, contaux1, 0d
+
+        delay 500
+    jmp e3
+    e2:
+        cmp cote1, 20
+        ja e4
+
+        sub cote1, 13
+
+        mov al, 30d
+        mul cote1
+        mov cote2, ax
+        add cote2, 85d 
+
+        mov contaux1, 10d  
+
+        Dibujar_enemigo cote2, contaux1, 0d
+
+        delay 500
+    jmp e3
+    e3:
+        mov enemigos_nivel1[si], 48
+    e4:
+
+    pop si 
+    pop ax
+ENDM
+
+LLenarArreglo MACRO arreglo
+Local Ciclo
+	xor si,si
+	xor cx,cx
+	mov cx, SIZEOF arreglo
+
+	Ciclo:
+	mov arreglo[si], 49
+	inc si
+	loop Ciclo
+
+    mov arreglo[22], 47
+ENDM
+
 
 Inicio_Nivel1 MACRO
 LOCAL e1, e2, e3, e5
@@ -613,7 +812,6 @@ LOCAL e1, e2, e3, e5
         add contaux1, 16
         cmp oaux3, 1
     jne e5
-
 ENDM
 
 

@@ -162,6 +162,16 @@ INCLUDE main.asm
 
     banderaTerminaJuego db 00h, '$'
 
+    msg_esc1   db 'Esc Pausa', '$'
+    msg_esc2   db 'Esc Salir', '$'
+    msg_start1 db 'Spa Empieza', '$'
+    limpia1    db '            ', '$'
+    msg_start2 db 'Spa Continua', '$'
+
+    enemigos_nivel1 db 22 dup('$'), '$'
+    cote dw 0, '$'
+    cote1 dw 0, '$'
+    cote2 dw 0, '$'
 .code 
 
 ;description
