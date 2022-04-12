@@ -591,7 +591,20 @@ LOCAL Izquierda, Derecha, sigue, Pausa, pe, lev, cambialetras
 ENDM
 
 Movimiento_Nivel1 MACRO direccion
-LOCAL i, d, m
+LOCAL i, d, m, c1, c2, f, c3
+    mov al, direccion
+    cmp al, 01
+    je c1 
+    c2:
+        cmp nx, 101d
+        je f
+    jmp c3
+    c1: 
+        cmp nx, 303d
+        je f
+    jmp c3
+
+    c3: 
     PintarNave nx, ny, 0d
     pintar_nave_detalles nx, ny, 0d
 
@@ -646,6 +659,7 @@ LOCAL i, d, m
 
         pop cx
         pop bx
+    f:
 ENDM
 
 Bajar_Enemigos MACRO
@@ -693,7 +707,7 @@ LOCAL e1, e2, e3, e4, e5, busco, select
 
         Dibujar_enemigo cote2, contaux1, 14d
 
-        delay 100
+        delay 100;500
     jmp e4 ; temporal
     e1:
         cmp cote1, 13
@@ -720,7 +734,7 @@ LOCAL e1, e2, e3, e4, e5, busco, select
 
         Dibujar_enemigo cote2, contaux1, 2d
 
-        delay 100
+        delay 100; 500
     jmp e4
     e2:
         cmp cote1, 20
@@ -748,7 +762,7 @@ LOCAL e1, e2, e3, e4, e5, busco, select
         Dibujar_enemigo cote2, contaux1, 1d
 
 
-        delay 100
+        delay 100;500
     jmp e4
     e3:
         mov enemigos_nivel1[si], 48
