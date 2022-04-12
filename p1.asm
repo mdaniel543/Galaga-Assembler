@@ -178,6 +178,15 @@ INCLUDE main.asm
 
     suplente dw 0, '$'
     siaux dw 0, '$'
+
+    balas db 9 dup('$'), '$'
+
+    auxbala dw 0, '$'
+    auxbala1 dw 0, '$'
+    auxbala2 dw 0, '$'
+
+    ab dw 0, '$'
+
 .code 
 
 ;description

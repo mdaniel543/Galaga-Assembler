@@ -57,7 +57,8 @@ LOCAL e1, e2, e3
 
     FiguraCorazon 80d, 155d, 4d
     ;====pinto el nivel 1=====
-    LLenarArreglo enemigos_nivel1
+    LLenarArreglo enemigos_nivel1, 49
+    LLenarArreglo balas, 48d
     Llenar_Posicion1 posicion_enemigos1
 
     Inicio_Nivel1
@@ -405,6 +406,7 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10
         e2:
         print time
         Bajar_Enemigos
+        subir_balas
         Mover
     jmp e1
 
@@ -490,7 +492,7 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10
 ENDM
 
 Mover MACRO 
-LOCAL Izquierda, Derecha, sigue, Pausa, pe, lev, cambialetras
+LOCAL Izquierda, Derecha, sigue, Pausa, pe, lev, cambialetras, disparo1
 	mov ah,01h
 	int 16h
 	cmp al,97
@@ -499,6 +501,8 @@ LOCAL Izquierda, Derecha, sigue, Pausa, pe, lev, cambialetras
 	je Derecha
     cmp al, 27
     je Pausa
+    cmp al, 118; v
+    je disparo1
     jmp sigue
     Izquierda:
         Movimiento_Nivel1 00h
@@ -510,6 +514,11 @@ LOCAL Izquierda, Derecha, sigue, Pausa, pe, lev, cambialetras
         mov ah, 00h
         int 16h
         jmp sigue
+    disparo1:
+        Canon1_disparo
+        mov ah, 00h
+        int 16h
+        jmp sigue 
     Pausa:
         mov ah, 00h
         int 16h
@@ -543,7 +552,6 @@ LOCAL Izquierda, Derecha, sigue, Pausa, pe, lev, cambialetras
 	    int 10h
 	    call DS_DATOS ;Cambia de DS al lugar de las variables
 	    print msg_esc2
-
     pe:
         mov ah, 00h
 	    int 16h
@@ -662,6 +670,112 @@ LOCAL i, d, m, c1, c2, f, c3
     f:
 ENDM
 
+Canon1_disparo MACRO 
+LOCAL e1, e2, e3, e4
+    push ax
+    xor ax, ax
+
+    mov al, balas[0]
+    cmp al, 49d
+    je e3
+
+    mov balas[0], 49d
+    
+    sub cCeny, 5
+    mov ax, cCeny
+    mov balas[1], al
+    mov suplente, cx
+    
+    Dibujar_Bala cCenx, suplente, 7d
+
+    mov ax, cCenx
+    
+    mov ab, ax
+    sub ab, 100d
+    mov ax, ab
+    mov balas[2], al
+    
+    e3:
+    pop ax
+ENDM
+
+subir_balas MACRO 
+LOCAL e1, e2, e3, e4, e11, e111
+    push bx 
+    push ax
+    xor ax, ax
+    xor bx, bx
+
+    mov al, balas[0]
+    cmp al, 49
+    je e1
+    mov al, balas[3]
+    cmp al, 49
+    je e2
+    mov al, balas[6]
+    cmp al, 49
+    je e3
+
+    jmp e4
+    e1:
+        mov al, balas[1]
+        cmp al, 3
+        je e11
+        
+        mov bl, balas[2]
+
+        mov auxbala1, bx
+        add auxbala1, 100
+
+        mov auxbala2, ax
+       
+        Dibujar_Bala  auxbala1, auxbala2, 0d
+
+        sub auxbala2, 1
+
+        Dibujar_Bala auxbala1, auxbala2, 7d
+
+        mov ax, auxbala2
+        mov balas[1], al
+
+        jmp e111
+        e11:
+            mov balas[0], 48
+
+            mov bl, balas[2]
+
+            mov auxbala1, bx
+            add auxbala1, 100
+
+            mov auxbala2, ax
+        
+            Dibujar_Bala  auxbala1, auxbala2, 0d
+        e111:
+            mov al, balas[3]
+            cmp al, 49
+            je e2
+            mov al, balas[6]
+            cmp al, 49
+            je e3
+    jmp e4
+    e2:
+
+
+        mov al, balas[6]
+        cmp al, 49
+        je e3
+    jmp e4
+    e3:
+
+    jmp e4
+
+    e4:
+    pop ax
+    pop bx
+ENDM
+
+
+
 Bajar_Enemigos MACRO
 LOCAL e1, e2, e3, e4, e5, busco, select
     push ax
@@ -671,10 +785,12 @@ LOCAL e1, e2, e3, e4, e5, busco, select
     mov cote1, 0
     mov si, 0
 
+    mov al, enemigos_nivel1[20]
+    cmp al, 48
+    je e4
+
     busco:
         mov al, enemigos_nivel1[si]
-        cmp al, 47
-        je e4
         cmp al, 49
         je select 
         inc cote1
@@ -772,7 +888,7 @@ LOCAL e1, e2, e3, e4, e5, busco, select
     pop ax
 ENDM
 
-LLenarArreglo MACRO arreglo
+LLenarArreglo MACRO arreglo, caracter
 Local Ciclo
     push si 
     push cx
@@ -782,11 +898,9 @@ Local Ciclo
 	mov cx, SIZEOF arreglo
 
 	Ciclo:
-	mov arreglo[si], 49
+	mov arreglo[si], caracter
 	inc si
 	loop Ciclo
-
-    mov arreglo[22], 47
 
     pop cx 
     pop si
@@ -1231,6 +1345,24 @@ LOCAL e0, e1
     pop si
 
 ENDM
+
+Dibujar_Bala MACRO x, y, color 
+LOCAL e0, e1
+    push cx
+
+    xor cx, cx 
+    mov cx, y
+    mov auxbala, cx
+
+    pintar_pixel auxbala, x, color 
+    dec auxbala
+    pintar_pixel auxbala, x, color
+    dec auxbala
+    pintar_pixel auxbala, x, color 
+    
+    pop cx
+ENDM 
+
 
 Dibujar_enemigo MACRO x, y, color
 LOCAL e2, ciclo1, e1
