@@ -58,6 +58,7 @@ LOCAL e1, e2, e3
     FiguraCorazon 80d, 155d, 4d
     ;====pinto el nivel 1=====
     LLenarArreglo enemigos_nivel1
+    Llenar_Posicion1 posicion_enemigos1
 
     Inicio_Nivel1
 
@@ -678,12 +679,22 @@ LOCAL e1, e2, e3, e4, e5, busco, select
         mov cote2, ax
         add cote2, 85d 
 
-        mov contaux1, 42d  
+        mov al,  posicion_enemigos1[si]
+        mov contaux1, ax
 
         Dibujar_enemigo cote2, contaux1, 0d
+        
+        add contaux1, 1
+        mov ax, contaux1
+        mov posicion_enemigos1[si], al
 
-        delay 500
-    jmp e3 ; temporal
+        cmp contaux1, 192d
+        jae e3
+
+        Dibujar_enemigo cote2, contaux1, 14d
+
+        delay 100
+    jmp e4 ; temporal
     e1:
         cmp cote1, 13
         ja e2
@@ -695,12 +706,22 @@ LOCAL e1, e2, e3, e4, e5, busco, select
         mov cote2, ax
         add cote2, 85d 
 
-        mov contaux1, 26d  
+        mov al,  posicion_enemigos1[si]
+        mov contaux1, ax
 
         Dibujar_enemigo cote2, contaux1, 0d
+        
+        add contaux1, 1
+        mov ax, contaux1
+        mov posicion_enemigos1[si], al
 
-        delay 500
-    jmp e3
+        cmp contaux1, 192d
+        jae e3
+
+        Dibujar_enemigo cote2, contaux1, 2d
+
+        delay 100
+    jmp e4
     e2:
         cmp cote1, 20
         ja e4
@@ -712,12 +733,23 @@ LOCAL e1, e2, e3, e4, e5, busco, select
         mov cote2, ax
         add cote2, 85d 
 
-        mov contaux1, 10d  
+        mov al,  posicion_enemigos1[si]
+        mov contaux1, ax
 
         Dibujar_enemigo cote2, contaux1, 0d
+        
+        add contaux1, 1
+        mov ax, contaux1
+        mov posicion_enemigos1[si], al
 
-        delay 500
-    jmp e3
+        cmp contaux1, 192d
+        jae e3
+
+        Dibujar_enemigo cote2, contaux1, 1d
+
+
+        delay 100
+    jmp e4
     e3:
         mov enemigos_nivel1[si], 48
     e4:
@@ -728,6 +760,9 @@ ENDM
 
 LLenarArreglo MACRO arreglo
 Local Ciclo
+    push si 
+    push cx
+
 	xor si,si
 	xor cx,cx
 	mov cx, SIZEOF arreglo
@@ -738,8 +773,41 @@ Local Ciclo
 	loop Ciclo
 
     mov arreglo[22], 47
+
+    pop cx 
+    pop si
 ENDM
 
+Llenar_Posicion1 MACRO arreglo
+Local Ciclo1, Ciclo3, Ciclo2, fin
+    push si
+    xor si, si
+    mov siaux, 0
+    Ciclo1:
+        mov arreglo[si], 42d
+        inc siaux 
+        inc si 
+        cmp siaux, 6
+        ja Ciclo2
+    jmp Ciclo1
+    Ciclo2:
+        mov arreglo[si], 26d
+        inc siaux
+        inc si
+        cmp siaux, 13
+        ja Ciclo3
+    jmp Ciclo2
+    Ciclo3:
+        mov arreglo[si], 10d
+        inc siaux 
+        inc si 
+        cmp siaux, 21
+        ja fin
+    jmp Ciclo3
+
+    fin: 
+    pop si
+ENDM
 
 Inicio_Nivel1 MACRO
 LOCAL e1, e2, e3, e5

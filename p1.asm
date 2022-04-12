@@ -169,9 +169,15 @@ INCLUDE main.asm
     msg_start2 db 'Spa Continua', '$'
 
     enemigos_nivel1 db 22 dup('$'), '$'
+
+    posicion_enemigos1 db 21 dup('$'), '$'
+
     cote dw 0, '$'
     cote1 dw 0, '$'
     cote2 dw 0, '$'
+
+    suplente dw 0, '$'
+    siaux dw 0, '$'
 .code 
 
 ;description
