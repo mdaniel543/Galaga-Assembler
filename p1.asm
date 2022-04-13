@@ -2,6 +2,7 @@ INCLUDE arch.asm
 INCLUDE user.asm
 INCLUDE admin.asm
 INCLUDE main.asm
+INCLUDE nvl1.asm
 
 .model small
 .stack 
@@ -170,8 +171,14 @@ INCLUDE main.asm
     finjuego   db 'Fin Juego', '$'
 
     enemigos_nivel1 db 42 dup('$'), '$'
+    enemigos_nivel2 db 84 dup('$'), '$'
+    enemigos_nivel3 db 126 dup('$'), '$'
 
     posicion_enemigos1 db 42 dup('$'), '$'
+    posicion_enemigos2 db 84 dup('$'), '$'
+    posicion_enemigos3 db 126 dup('$'), '$'
+
+    otravez dw 0, '$'
 
     cote1 dw 0, '$'
     cote2 dw 0, '$'
@@ -192,6 +199,7 @@ INCLUDE main.asm
     decsuma dw 0, '$'
 
     auxvida dw 0, '$'
+    templlenado db 0, '$'
 
 .code 
 
@@ -257,5 +265,12 @@ DS_VIDEO proc
     pop ax
     ret
 DS_VIDEO endp
+
+Inicia_Juego proc
+    Inicio_Tiempo
+    ret
+Inicia_Juego endp
+
+
 
 end main 

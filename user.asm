@@ -49,6 +49,8 @@ LOCAL e1, e2, e3
 
     mov lives, 3
 
+    mov level, 49
+
     ModoGrafico
 
     DatosMostrados
@@ -82,7 +84,7 @@ LOCAL e1, e2, e3
 
         ImprimirPantalla 22d, 0d, msg_esc1
 
-        Inicio_Tiempo
+        call Inicia_Juego
     e3:
     ModoTexto
 ENDM
@@ -374,7 +376,7 @@ LOCAL ciclo1, ciclo2, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, ciclo3, ciclo4, c
 ENDM
 
 Inicio_Tiempo MACRO 
-LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10
+LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, level1, level2, l
     e1:
         cmp banderaTerminaJuego, 01h
         je e10
@@ -402,8 +404,19 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10
         e2:
         ImprimirPantalla 15d, 2d, time
         
-        Bajar_Enemigos
-        subir_balas
+        cmp level, 49
+        je level1
+        cmp level, 50
+        je level2
+        level1:
+            Bajar_Enemigos enemigos_nivel1, posicion_enemigos1, 250
+            subir_balas enemigos_nivel1, posicion_enemigos1
+            jmp l
+        level2:
+            Bajar_Enemigos enemigos_nivel2, posicion_enemigos2, 150
+            subir_balas enemigos_nivel2, posicion_enemigos2
+            jmp l
+        l:
         Mover
     jmp e1
 
@@ -471,7 +484,7 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10
 ENDM
 
 Mover MACRO 
-LOCAL Izquierda, Derecha, sigue, Pausa, pe, lev, cambialetras, disparo1
+LOCAL Izquierda, Derecha,level1,level12, level22, level2, l,l2, sigue, Pausa, pe, lev, cambialetras, disparo1
 	mov ah,01h
 	int 16h
 	cmp al,97
@@ -484,12 +497,32 @@ LOCAL Izquierda, Derecha, sigue, Pausa, pe, lev, cambialetras, disparo1
     je disparo1
     jmp sigue
     Izquierda:
-        Movimiento_Nivel1 00h
+        cmp level, 49
+        je level1
+        cmp level, 50
+        je level2
+        level1:
+            Movimiento_Nivel1 00h
+            jmp l
+        level2:
+            Movimiento_Nivel2 00h
+            jmp l
+        l:
         mov ah, 00h
         int 16h
         jmp sigue
     Derecha:    
-        Movimiento_Nivel1 01h
+        cmp level, 49
+        je level12
+        cmp level, 50
+        je level22
+        level12:
+            Movimiento_Nivel1 01h
+            jmp l2
+        level22:
+            Movimiento_Nivel2 01h
+            jmp l2
+        l2:
         mov ah, 00h
         int 16h
         jmp sigue
@@ -595,6 +628,86 @@ LOCAL i, d, m, c1, c2, f, c3
     f:
 ENDM
 
+Movimiento_Nivel2 MACRO direccion
+LOCAL i, d, m, c1, c2, f, c3
+    mov al, direccion
+    cmp al, 01
+    je c1 
+    c2:
+        cmp nx, 101d
+        je f
+    jmp c3
+    c1: 
+        cmp nx, 303d
+        je f
+    jmp c3
+
+    c3: 
+    PintarNave nx, ny, 0d
+    pintar_nave_detalles nx, ny, 0d
+
+    push bx
+    push cx
+    ;==========================cañon izquierda=================
+    mov bx, nx
+    mov cx, ny
+
+    mov cIzqx, bx
+    mov cIzqy, cx 
+
+    sub cIzqy, 3 
+
+    PintarCanon cIzqx, cIzqy, 01h
+     ;==============================cañon centro=====================
+    mov cCenx, bx
+    mov cCeny, cx
+
+    add cCenx, 7
+    sub cCeny, 12
+    
+    PintarCanon cCenx, cCeny, 01h
+
+    pop cx
+    pop bx
+    
+    mov al, direccion
+    cmp al, 01h
+    je d
+    i:
+        sub nx, 1
+        jmp m
+    d:
+        add nx, 1
+    m:
+        PintarNave nx, ny, 15d
+        pintar_nave_detalles nx, ny, 4d
+
+        push bx
+        push cx
+        ;==========================cañon izquierda=================
+        mov bx, nx
+        mov cx, ny
+
+        mov cIzqx, bx
+        mov cIzqy, cx 
+
+        sub cIzqy, 3 
+
+        PintarCanon cIzqx, cIzqy, 00h
+        ;==============================cañon centro=====================
+        mov cCenx, bx
+        mov cCeny, cx
+
+        add cCenx, 7
+        sub cCeny, 12
+        
+        PintarCanon cCenx, cCeny, 00h
+
+        pop cx
+        pop bx
+    f:
+ENDM
+
 Canon1_disparo MACRO 
 LOCAL e1, e2, e3, e4
     push ax
@@ -606,10 +719,12 @@ LOCAL e1, e2, e3, e4
 
     mov balas[0], 49d
     
+    xor ax, ax
+    
     sub cCeny, 5
     mov ax, cCeny
     mov balas[1], al
-    mov suplente, cx
+    mov suplente, ax
     
     Dibujar_Bala cCenx, suplente, 7d
 
@@ -624,7 +739,7 @@ LOCAL e1, e2, e3, e4
     pop ax
 ENDM
 
-subir_balas MACRO 
+subir_balas MACRO enemigos, posicion
 LOCAL e1, e2, e3, e4, e11, e111, ciclo1,suma, esc1, esc2, sc1, scr1, scr2, scr4, rango, nocolison, elimino, dibujo_eliminacion, ociclo1, validar, f1, f2, f3, s1, s2
     push bx 
     push ax
@@ -673,7 +788,7 @@ LOCAL e1, e2, e3, e4, e11, e111, ciclo1,suma, esc1, esc2, sc1, scr1, scr2, scr4,
         ;====compruebo si la nueva posicion colisona =======
         delay 75
         ciclo1:
-            mov bl, posicion_enemigos1[si]
+            mov bl, posicion[si]
             cmp auxcolision2, bx
             ja sc1	
             cmp auxcolision, bx
@@ -689,7 +804,7 @@ LOCAL e1, e2, e3, e4, e11, e111, ciclo1,suma, esc1, esc2, sc1, scr1, scr2, scr4,
         validar:
             push siaux
 
-            mov al, enemigos_nivel1[si]
+            mov al, enemigos[si]
             cmp al, 48
             je ociclo1
             
@@ -728,20 +843,20 @@ LOCAL e1, e2, e3, e4, e11, e111, ciclo1,suma, esc1, esc2, sc1, scr1, scr2, scr4,
                 ja ociclo1
                 ;=====el enemigo ya localizado comprabamos su vida======
                 inc si
-                mov al, posicion_enemigos1[si]
+                mov al, posicion[si]
                 cmp al, 1
                 je s2
                 sub al, 1
-                mov posicion_enemigos1[si], al  
+                mov posicion[si], al  
                 jmp s1
                 s2:
                 dec si 
                 ;=======================================================
-                mov al,  posicion_enemigos1[si]
+                mov al,  posicion[si]
                 mov contaux1, ax
 
                 Dibujar_enemigo cote2, contaux1, 0d
-                mov enemigos_nivel1[si], 48
+                mov enemigos[si], 48
 
                 pop siaux
                 push ax
@@ -852,8 +967,8 @@ LOCAL e1, e2, e3, e4, e11, e111, ciclo1,suma, esc1, esc2, sc1, scr1, scr2, scr4,
     pop bx
 ENDM
 
-Bajar_Enemigos MACRO
-LOCAL e1, e2, e3, e4, e5, busco, select, v1, v2, v0
+Bajar_Enemigos MACRO enemigos, posicion, retardo
+LOCAL e1, e2, e3, e4, e5, vernivel1, vernivel2, finnivel2, resetcote, busco, select, v1, v2, v0, finnivel1
     push ax
     push si
     xor ax, ax
@@ -861,18 +976,42 @@ LOCAL e1, e2, e3, e4, e5, busco, select, v1, v2, v0
     mov cote1, 0
     mov si, 0
 
-    mov al, enemigos_nivel1[40]
-    cmp al, 48
-    je e4
+    cmp level, 49
+    je vernivel1
+    cmp level, 50
+    je vernivel2
 
+    vernivel1:
+    mov al, enemigos[40]
+    cmp al, 48
+    je finnivel1
+    jmp busco
+
+    finnivel1:
+        Inicio_Nivel2
+    jmp e4
+
+    vernivel2:
+        mov al, enemigos[80]
+        cmp al, 48
+        je finnivel2
+        jmp busco
+
+    finnivel2:
+        jmp e4
+
+    resetcote:
+        mov cote1, 0
     busco:
-        mov al, enemigos_nivel1[si]
+        mov al, enemigos[si]
         cmp al, 49
         je select 
         inc cote1
         inc si
         inc si
-    jmp busco
+        cmp cote1, 21
+        je resetcote
+    jne busco
 
     select:
         ;empiezo obteniendo la altura donde esta la nave 
@@ -886,21 +1025,21 @@ LOCAL e1, e2, e3, e4, e5, busco, select, v1, v2, v0
         mov cote2, ax
         add cote2, 85d 
 
-        mov al,  posicion_enemigos1[si]
+        mov al,  posicion[si]
         mov contaux1, ax
 
         Dibujar_enemigo cote2, contaux1, 0d
         
         add contaux1, 1
         mov ax, contaux1
-        mov posicion_enemigos1[si], al
+        mov posicion[si], al
 
         cmp contaux1, 192d
         jae e3
 
         Dibujar_enemigo cote2, contaux1, 14d
 
-        delay 250;500
+        delay retardo
     jmp e5 ; temporal
     e1:
         cmp cote1, 13
@@ -913,21 +1052,21 @@ LOCAL e1, e2, e3, e4, e5, busco, select, v1, v2, v0
         mov cote2, ax
         add cote2, 85d 
 
-        mov al,  posicion_enemigos1[si]
+        mov al,  posicion[si]
         mov contaux1, ax
 
         Dibujar_enemigo cote2, contaux1, 0d
         
         add contaux1, 1
         mov ax, contaux1
-        mov posicion_enemigos1[si], al
+        mov posicion[si], al
 
         cmp contaux1, 192d
         jae e3
 
         Dibujar_enemigo cote2, contaux1, 2d
 
-        delay 250; 500
+        delay retardo
     jmp e5
     e2:
         cmp cote1, 20
@@ -940,14 +1079,14 @@ LOCAL e1, e2, e3, e4, e5, busco, select, v1, v2, v0
         mov cote2, ax
         add cote2, 85d 
 
-        mov al,  posicion_enemigos1[si]
+        mov al,  posicion[si]
         mov contaux1, ax
 
         Dibujar_enemigo cote2, contaux1, 0d
         
         add contaux1, 1
         mov ax, contaux1
-        mov posicion_enemigos1[si], al
+        mov posicion[si], al
 
         cmp contaux1, 192d
         jae e3
@@ -955,10 +1094,10 @@ LOCAL e1, e2, e3, e4, e5, busco, select, v1, v2, v0
         Dibujar_enemigo cote2, contaux1, 1d
 
 
-        delay 250;500
+        delay retardo
     jmp e5
     e3:
-        mov enemigos_nivel1[si], 48
+        mov enemigos[si], 48
 
     e5:
     ;====================colision nave y enemigo============
@@ -977,7 +1116,7 @@ LOCAL e1, e2, e3, e4, e5, busco, select, v1, v2, v0
         ja e4
 
         ;==========colision segun yo ===============
-        mov enemigos_nivel1[si], 48
+        mov enemigos[si], 48
         Dibujar_enemigo cote2, contaux1, 0d
 
         cmp lives, 3
@@ -1054,11 +1193,112 @@ Local Ciclo1, Ciclo3, Ciclo2, fin
         inc si 
         mov arreglo[si], 3d
         inc si
-        cmp siaux, 21
+        cmp siaux, 20
         ja fin
     jmp Ciclo3
 
     fin: 
+    pop si
+ENDM
+
+Llenar_Posicion2 MACRO arreglo
+Local Ciclo1, Ciclo3, Ciclo2, fin, otra, cmpe, InicioC2, InicioC3
+    push si
+    push bx
+    xor bx, bx
+    xor si, si
+    mov otravez, 0
+    mov templlenado, 90
+    otra:
+        inc otravez
+        mov siaux, 0
+        Ciclo1:
+            mov bl, templlenado
+            mov arreglo[si], bl
+            inc siaux 
+            inc si 
+            mov arreglo[si], 1d
+            inc si
+            cmp siaux, 6
+            ja InicioC2
+        jmp Ciclo1
+        InicioC2:
+            sub templlenado, 16
+        Ciclo2:
+            mov bl, templlenado
+            mov arreglo[si], bl
+            inc siaux
+            inc si
+            mov arreglo[si], 2d
+            inc si
+            cmp siaux, 13
+            ja InicioC3
+        jmp Ciclo2
+        InicioC3:
+            sub templlenado, 16
+        Ciclo3:
+            mov bl, templlenado
+            mov arreglo[si], bl
+            inc siaux 
+            inc si 
+            mov arreglo[si], 3d
+            inc si
+            cmp siaux, 20
+            ja cmpe
+        jmp Ciclo3
+        cmpe:
+            sub templlenado, 16
+        cmp otravez, 2
+    jne otra
+    pop bx	
+    pop si
+ENDM
+
+
+Llenar_Posicion3 MACRO arreglo
+Local Ciclo1, Ciclo3, Ciclo2, fin, otra, cmpe, InicioC2, InicioC3
+    push si
+    xor si, si
+    mov otravez, 0
+    mov templlenado, 138
+    otra:
+        inc otravez
+        mov siaux, 0
+        Ciclo1:
+            mov arreglo[si], templlenado
+            inc siaux 
+            inc si 
+            mov arreglo[si], 1d
+            inc si
+            cmp siaux, 6
+            ja InicioC2
+        jmp Ciclo1
+        InicioC2:
+            sub templlenado, 16
+        Ciclo2:
+            mov arreglo[si], templlenado
+            inc siaux
+            inc si
+            mov arreglo[si], 2d
+            inc si
+            cmp siaux, 13
+            ja InicioC3
+        jmp Ciclo2
+        InicioC3:
+            sub templlenado, 16
+        Ciclo3:
+            mov arreglo[si], templlenado
+            inc siaux 
+            inc si 
+            mov arreglo[si], 3d
+            inc si
+            cmp siaux, 20
+            ja cmpe
+        jmp Ciclo3
+        cmpe:
+            sub templlenado, 16
+        cmp otravez, 3
+    jne otra	
     pop si
 ENDM
 
@@ -1137,7 +1377,9 @@ ENDM
 
 
 Inicio_Nivel2 MACRO
-LOCAL e1, e2, e3, e5
+LOCAL e1, e2, e3, e5, final, ef1, ef3
+    PintarNave nx, ny, 0d   
+    PintarCanon cCenx, cCeny, 01h
      ;====================segunda nave de izquerda=============
     mov nx, 202d
     mov ny, 190d
@@ -1213,6 +1455,27 @@ LOCAL e1, e2, e3, e5
         cmp oaux3, 2
     jne e5
 
+    Llenar_Posicion2 posicion_enemigos2
+    LLenarArreglo enemigos_nivel2, 49d
+    mov level, 50
+    ImprimirPantalla 7d, 8d, level
+    ImprimirPantalla 22d, 0d, limpia1
+    ImprimirPantalla 22d, 0d, msg_start1
+
+    ef1:
+        getChar
+        cmp al, 27
+        je ef3
+        cmp al, 32
+        je final
+    jmp ef1
+
+    ef3:
+        mov banderaTerminaJuego, 01h 
+
+    final:
+    ImprimirPantalla 22d, 0d, limpia1
+    ImprimirPantalla 22d, 0d, msg_esc1
 ENDM
 
 
@@ -1297,8 +1560,6 @@ LOCAL e1, e2, e3, e5
         add contaux1, 16
         cmp oaux3, 3
     jne e5
-
-
 ENDM 
 
 PintarNave MACRO x, abajo, color 
