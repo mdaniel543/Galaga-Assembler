@@ -3,7 +3,7 @@ INCLUDE user.asm
 INCLUDE admin.asm
 INCLUDE main.asm
 
-.model small 
+.model small
 .stack 
 .data 
     encabezado db "Universidad de San Carlos de Guatemala",10, 13, "Facultad de Ingenieria",10, 13, "Escuela de Ciencias y Sistemas",10, 13, "Arquitectura de Compiladores y ensambladores 1",10, 13, "Seccion A", 10, 13, "Marvin Daniel Rodriguez Felix", 10, 13, "201709450", 10, 13, "$"
@@ -128,6 +128,7 @@ INCLUDE main.asm
     level db 49, '$'
     score db 48,48,48, '$'
     time db 48,48,58,48,48,58,48,48, '$'
+    lives dw 3, '$'
 
     auxcora  dw 0, '$'
     auxcoro1 dw 0, '$'
@@ -141,17 +142,16 @@ INCLUDE main.asm
     contador3 dw 0, '$'
     contador4 dw 0, '$'
     contador5 dw 0, '$'
-
     
-    nx dw ?, '$'
-    ny dw ?, '$'
+    nx dw 0, '$'
+    ny dw 0, '$'
     
-    cIzqx dw ?, '$'
-    cIzqy dw ?, '$'
-    cCenx dw ?, '$'
-    cCeny dw ?, '$'
-    cDerx dw ?, '$'
-    cDery dw ?, '$'
+    cIzqx dw 0, '$'
+    cIzqy dw 0, '$'
+    cCenx dw 0, '$'
+    cCeny dw 0, '$'
+    cDerx dw 0, '$'
+    cDery dw 0, '$'
 
     contaux dw 0, '$'
     contaux1 dw 0, '$'
@@ -167,12 +167,12 @@ INCLUDE main.asm
     msg_start1 db 'Spa Empieza', '$'
     limpia1    db '            ', '$'
     msg_start2 db 'Spa Continua', '$'
+    finjuego   db 'Fin Juego', '$'
 
     enemigos_nivel1 db 42 dup('$'), '$'
 
     posicion_enemigos1 db 42 dup('$'), '$'
 
-    cote dw 0, '$'
     cote1 dw 0, '$'
     cote2 dw 0, '$'
 
@@ -190,6 +190,8 @@ INCLUDE main.asm
     auxcolision2 dw 0, '$'
 
     decsuma dw 0, '$'
+
+    auxvida dw 0, '$'
 
 .code 
 
