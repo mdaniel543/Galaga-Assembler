@@ -126,7 +126,7 @@ INCLUDE main.asm
 
 
     level db 49, '$'
-    score db 48,48,48,48,48, '$'
+    score db 48,48, '$'
     time db 48,48,58,48,48,58,48,48, '$'
 
     auxcora  dw 0, '$'
@@ -168,9 +168,9 @@ INCLUDE main.asm
     limpia1    db '            ', '$'
     msg_start2 db 'Spa Continua', '$'
 
-    enemigos_nivel1 db 22 dup('$'), '$'
+    enemigos_nivel1 db 42 dup('$'), '$'
 
-    posicion_enemigos1 db 21 dup('$'), '$'
+    posicion_enemigos1 db 42 dup('$'), '$'
 
     cote dw 0, '$'
     cote1 dw 0, '$'
@@ -186,6 +186,8 @@ INCLUDE main.asm
     auxbala2 dw 0, '$'
 
     ab dw 0, '$'
+    auxcolision  dw 0, '$'
+    auxcolision2 dw 0, '$'
 
 .code 
 

@@ -700,11 +700,13 @@ LOCAL e1, e2, e3, e4
 ENDM
 
 subir_balas MACRO 
-LOCAL e1, e2, e3, e4, e11, e111
+LOCAL e1, e2, e3, e4, e11, e111, ciclo1, sc1, rango, nocolison, elimino, dibujo_eliminacion, ociclo1, validar, f1, f2, f3
     push bx 
     push ax
+    push si
     xor ax, ax
     xor bx, bx
+    xor si, si
 
     mov al, balas[0]
     cmp al, 49
@@ -733,10 +735,93 @@ LOCAL e1, e2, e3, e4, e11, e111
 
         sub auxbala2, 1
 
-        Dibujar_Bala auxbala1, auxbala2, 7d
-
         mov ax, auxbala2
-        mov balas[1], al
+        mov auxcolision2, ax 
+        sub auxcolision2, 8
+
+        mov auxcolision, ax
+
+        xor bx, bx
+        mov siaux, 0
+
+        delay 100
+        ciclo1:
+            mov bl, posicion_enemigos1[si]
+            cmp auxcolision2, bx
+            ja sc1	
+            cmp auxcolision, bx
+            jae validar
+            sc1:
+            cmp siaux, 20d
+            jae nocolison
+            inc si 
+            inc si 
+            inc siaux 
+        jmp ciclo1
+
+        validar:
+            push siaux
+
+            mov al, enemigos_nivel1[si]
+            cmp al, 48
+            je ociclo1
+            
+            mov cote1, 0
+            mov cote2, 0
+
+            cmp siaux, 7
+            jb dibujo_eliminacion
+            cmp siaux, 14
+            jb f2
+            cmp siaux, 21
+            jb f3
+            f2: 
+                sub siaux, 7
+                jmp dibujo_eliminacion
+            f3: 
+                sub siaux, 14     
+                jmp dibujo_eliminacion
+
+            dibujo_eliminacion:
+                inc siaux
+                mov al, 30d
+                mul siaux
+                mov cote2, ax
+                add cote2, 85d 
+
+                mov bx, cote2
+                cmp auxbala1, bx
+                jb ociclo1
+
+                mov cote1, bx
+                add cote1, 8
+                mov bx, cote1 
+
+                cmp auxbala1, bx
+                ja ociclo1
+
+                mov al,  posicion_enemigos1[si]
+                mov contaux1, ax
+
+                Dibujar_enemigo cote2, contaux1, 0d
+
+                mov balas[0], 48
+                mov enemigos_nivel1[si], 48
+                pop siaux
+            jmp e111
+
+            ociclo1:
+                pop siaux
+                inc si
+                inc si
+                inc siaux
+            jmp ciclo1
+        
+        nocolison:
+            Dibujar_Bala auxbala1, auxbala2, 7d
+
+            mov ax, auxbala2
+            mov balas[1], al
 
         jmp e111
         e11:
@@ -770,11 +855,10 @@ LOCAL e1, e2, e3, e4, e11, e111
     jmp e4
 
     e4:
+    pop si
     pop ax
     pop bx
 ENDM
-
-
 
 Bajar_Enemigos MACRO
 LOCAL e1, e2, e3, e4, e5, busco, select
@@ -785,7 +869,7 @@ LOCAL e1, e2, e3, e4, e5, busco, select
     mov cote1, 0
     mov si, 0
 
-    mov al, enemigos_nivel1[20]
+    mov al, enemigos_nivel1[41]
     cmp al, 48
     je e4
 
@@ -794,6 +878,7 @@ LOCAL e1, e2, e3, e4, e5, busco, select
         cmp al, 49
         je select 
         inc cote1
+        inc si
         inc si
     jmp busco
 
@@ -915,12 +1000,16 @@ Local Ciclo1, Ciclo3, Ciclo2, fin
         mov arreglo[si], 42d
         inc siaux 
         inc si 
+        mov arreglo[si], 1d
+        inc si
         cmp siaux, 6
         ja Ciclo2
     jmp Ciclo1
     Ciclo2:
         mov arreglo[si], 26d
         inc siaux
+        inc si
+        mov arreglo[si], 2d
         inc si
         cmp siaux, 13
         ja Ciclo3
@@ -929,6 +1018,8 @@ Local Ciclo1, Ciclo3, Ciclo2, fin
         mov arreglo[si], 10d
         inc siaux 
         inc si 
+        mov arreglo[si], 3d
+        inc si
         cmp siaux, 21
         ja fin
     jmp Ciclo3
