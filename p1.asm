@@ -126,7 +126,7 @@ INCLUDE main.asm
 
 
     level db 49, '$'
-    score db 48,48, '$'
+    score db 48,48,48, '$'
     time db 48,48,58,48,48,58,48,48, '$'
 
     auxcora  dw 0, '$'
@@ -188,6 +188,8 @@ INCLUDE main.asm
     ab dw 0, '$'
     auxcolision  dw 0, '$'
     auxcolision2 dw 0, '$'
+
+    decsuma dw 0, '$'
 
 .code 
 

@@ -36,6 +36,10 @@ EmpiezaJuego MACRO
 LOCAL e1, e2, e3 
     limpiar
 
+    mov score[0], 48
+    mov score[1], 48
+    mov score[2], 48
+
     mov time[7], 48
     mov time[6], 48
     mov time[4], 48
@@ -152,7 +156,7 @@ DatosMostrados MACRO
 	mov ah, 02h
 	mov bh, 00h
 	mov dh, 11d ;23 fil
-	mov dl, 4d ;118 col
+	mov dl, 7d ;118 col
 	int 10h
 	call DS_DATOS ;Cambia de DS al lugar de las variables
 	print score
@@ -374,7 +378,7 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10
         cmp banderaTerminaJuego, 01h
         je e10
 
-        delay 175
+        delay 150
 
         call DS_VIDEO ;Cambio de DS a memoria de video
         xor ax, ax
@@ -700,7 +704,7 @@ LOCAL e1, e2, e3, e4
 ENDM
 
 subir_balas MACRO 
-LOCAL e1, e2, e3, e4, e11, e111, ciclo1, sc1, rango, nocolison, elimino, dibujo_eliminacion, ociclo1, validar, f1, f2, f3
+LOCAL e1, e2, e3, e4, e11, e111, ciclo1,suma, esc1, esc2, sc1, scr1, scr2, scr4, rango, nocolison, elimino, dibujo_eliminacion, ociclo1, validar, f1, f2, f3, s1, s2
     push bx 
     push ax
     push si
@@ -720,6 +724,7 @@ LOCAL e1, e2, e3, e4, e11, e111, ciclo1, sc1, rango, nocolison, elimino, dibujo_
 
     jmp e4
     e1:
+        ;============borro bala grisss=============
         mov al, balas[1]
         cmp al, 3
         je e11
@@ -744,7 +749,8 @@ LOCAL e1, e2, e3, e4, e11, e111, ciclo1, sc1, rango, nocolison, elimino, dibujo_
         xor bx, bx
         mov siaux, 0
 
-        delay 100
+        ;====compruebo si la nueva posicion colisona =======
+        delay 75
         ciclo1:
             mov bl, posicion_enemigos1[si]
             cmp auxcolision2, bx
@@ -758,7 +764,7 @@ LOCAL e1, e2, e3, e4, e11, e111, ciclo1, sc1, rango, nocolison, elimino, dibujo_
             inc si 
             inc siaux 
         jmp ciclo1
-
+        ;=============hago validaciones de la colision===========
         validar:
             push siaux
 
@@ -781,7 +787,7 @@ LOCAL e1, e2, e3, e4, e11, e111, ciclo1, sc1, rango, nocolison, elimino, dibujo_
             f3: 
                 sub siaux, 14     
                 jmp dibujo_eliminacion
-
+            ;=============veo de que enemigo se trata=============
             dibujo_eliminacion:
                 inc siaux
                 mov al, 30d
@@ -799,14 +805,80 @@ LOCAL e1, e2, e3, e4, e11, e111, ciclo1, sc1, rango, nocolison, elimino, dibujo_
 
                 cmp auxbala1, bx
                 ja ociclo1
-
+                ;=====el enemigo ya localizado comprabamos su vida======
+                inc si
+                mov al, posicion_enemigos1[si]
+                cmp al, 1
+                je s2
+                sub al, 1
+                mov posicion_enemigos1[si], al  
+                jmp s1
+                s2:
+                dec si 
+                ;=======================================================
                 mov al,  posicion_enemigos1[si]
                 mov contaux1, ax
 
                 Dibujar_enemigo cote2, contaux1, 0d
+                mov enemigos_nivel1[si], 48
+
+                pop siaux
+
+                cmp siaux, 14
+                jae esc2
+                cmp siaux, 7
+                jae esc1
+            
+                mov decsuma, 1
+                jmp suma
+
+            esc1:
+                mov decsuma, 2
+                jmp suma
+            esc2:
+                mov decsuma, 3
+                jmp suma
+
+            suma:
+                mov al, score[2]
+                cmp al, 57
+                je scr1
+                add al, 1
+                mov score[2], al
+                jmp scr4
+                scr1:
+                mov score[2], 48
+                mov al, score[1]
+                cmp al, 57
+                je scr2
+                add al, 1
+                mov score[1], al
+                jmp scr4
+                scr2:
+                mov score[1], 48
+                mov al, score[0]
+                add al, 1
+                mov score[0], al
+
+            scr4:
+                sub decsuma, 1
+                cmp decsuma, 0
+            ja suma
+
+                call DS_VIDEO ;Cambio de DS a memoria de video
+                xor ax, ax
+                mov ah, 02h
+                mov bh, 00h
+                mov dh, 11d ;23 fil
+                mov dl, 7d ;118 col
+                int 10h
+                call DS_DATOS ;Cambia de DS al lugar de las variables
+                print score
 
                 mov balas[0], 48
-                mov enemigos_nivel1[si], 48
+            jmp e111
+            s1:
+                mov balas[0], 48
                 pop siaux
             jmp e111
 
@@ -816,7 +888,7 @@ LOCAL e1, e2, e3, e4, e11, e111, ciclo1, sc1, rango, nocolison, elimino, dibujo_
                 inc si
                 inc siaux
             jmp ciclo1
-        
+        ;============sigo normal con la subida de la bala
         nocolison:
             Dibujar_Bala auxbala1, auxbala2, 7d
 
@@ -908,7 +980,7 @@ LOCAL e1, e2, e3, e4, e5, busco, select
 
         Dibujar_enemigo cote2, contaux1, 14d
 
-        delay 100;500
+        delay 250;500
     jmp e4 ; temporal
     e1:
         cmp cote1, 13
@@ -935,7 +1007,7 @@ LOCAL e1, e2, e3, e4, e5, busco, select
 
         Dibujar_enemigo cote2, contaux1, 2d
 
-        delay 100; 500
+        delay 250; 500
     jmp e4
     e2:
         cmp cote1, 20
@@ -963,7 +1035,7 @@ LOCAL e1, e2, e3, e4, e5, busco, select
         Dibujar_enemigo cote2, contaux1, 1d
 
 
-        delay 100;500
+        delay 250;500
     jmp e4
     e3:
         mov enemigos_nivel1[si], 48
