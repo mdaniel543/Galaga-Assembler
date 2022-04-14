@@ -266,11 +266,39 @@ DS_VIDEO proc
     ret
 DS_VIDEO endp
 
+EmpiezaJuego_proc proc
+    EmpiezaJuego
+    ret
+EmpiezaJuego_proc endp
+
 Inicia_Juego proc
     Inicio_Tiempo
     ret
 Inicia_Juego endp
 
+Inicio_Nivel1_proc proc
+    Inicio_Nivel1
+    ret
+Inicio_Nivel1_proc endp
 
+Inicio_Nivel2_proc proc
+    Inicio_Nivel2
+    ret
+Inicio_Nivel2_proc endp
+
+Inicio_Nivel3_proc proc
+    Inicio_Nivel3
+    ret
+Inicio_Nivel3_proc endp
+
+mover_proc proc
+    Mover
+    ret
+mover_proc endp
+
+DatosMostrados_proc proc
+    DatosMostrados 
+    ret
+DatosMostrados_proc endp
 
 end main 
