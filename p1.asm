@@ -170,13 +170,9 @@ INCLUDE nvl1.asm
     msg_start2 db 'Spa Continua', '$'
     finjuego   db 'Fin Juego', '$'
 
-    enemigos_nivel1 db 42 dup('$'), '$'
-    enemigos_nivel2 db 84 dup('$'), '$'
-    enemigos_nivel3 db 126 dup('$'), '$'
+    enemigos db 126 dup('$'), '$'
 
-    posicion_enemigos1 db 42 dup('$'), '$'
-    posicion_enemigos2 db 84 dup('$'), '$'
-    posicion_enemigos3 db 126 dup('$'), '$'
+    posicion db 126 dup('$'), '$'
 
     otravez dw 0, '$'
 
@@ -200,6 +196,7 @@ INCLUDE nvl1.asm
 
     auxvida dw 0, '$'
     templlenado db 0, '$'
+    retardo dw 0, '$'
 
 .code 
 

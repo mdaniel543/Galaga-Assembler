@@ -51,6 +51,8 @@ LOCAL e1, e2, e3
 
     mov level, 49
 
+    mov retardo, 250
+
     ModoGrafico
 
     call DatosMostrados_proc
@@ -65,9 +67,9 @@ LOCAL e1, e2, e3
 
     FiguraCorazon 80d, 155d, 4d
     ;====pinto el nivel 1=====
-    LLenarArreglo enemigos_nivel1, 49
+    LLenarArreglo enemigos, 49
     LLenarArreglo balas, 48d
-    Llenar_Posicion1 posicion_enemigos1
+    Llenar_Posicion1 posicion
 
     call Inicio_Nivel1_proc
 
@@ -399,30 +401,13 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, level1, level2, l, level3
             add al, 1
             mov time[6], al
             
-            cmp al, 57
+            cmp al, 54
             je e3
         e2:
         ImprimirPantalla 15d, 2d, time
         
-        cmp level, 49
-        je level1
-        cmp level, 50
-        je level2
-        cmp level, 51
-        je level3
-        level1:
-            Bajar_Enemigos enemigos_nivel1, posicion_enemigos1, 250
-            subir_balas enemigos_nivel1, posicion_enemigos1
-            jmp l
-        level2:
-            Bajar_Enemigos enemigos_nivel2, posicion_enemigos2, 175
-            subir_balas enemigos_nivel2, posicion_enemigos2
-            jmp l
-        level3:
-            Bajar_Enemigos enemigos_nivel3, posicion_enemigos3, 100
-            subir_balas enemigos_nivel3, posicion_enemigos3
-            jmp l
-        l:
+        Bajar_Enemigos
+        subir_balas
         call mover_proc
     jmp e1
 
@@ -448,7 +433,7 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, level1, level2, l, level3
             add al, 1
             mov time[3], al
             
-            cmp al, 57
+            cmp al, 54
             je e6   
         e4:
         
@@ -478,7 +463,7 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, level1, level2, l, level3
             add al, 1
             mov time[0], al
             
-            cmp al, 57
+            cmp al, 54
             je e10  
         e8:
         
@@ -490,7 +475,7 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, level1, level2, l, level3
 ENDM
 
 Mover MACRO 
-LOCAL Izquierda, Derecha,level1,level12, level22,level3, level32, disparo2, level2, l,l2, sigue, Pausa, pe, lev, cambialetras, disparo1
+LOCAL alldisparos, Izquierda, Derecha,level1,level12, level22,level3, level32, disparo2, level2, l,l2, sigue, Pausa, pe, lev, cambialetras, disparo1
 	mov ah,01h
 	int 16h
 	cmp al,97
@@ -563,7 +548,7 @@ LOCAL Izquierda, Derecha,level1,level12, level22,level3, level32, disparo2, leve
         mov ah, 00h
         int 16h
         jmp sigue 
-    alldisparos
+    alldisparos:
         Canon1_disparo
         Canon2_disparo
         Canon3_disparo
@@ -944,7 +929,7 @@ LOCAL e1, e2, e3, e4
 ENDM
 
 
-subir_balas MACRO enemigos, posicion
+subir_balas MACRO
 LOCAL e1, e2, e3, e4
     push bx 
     push ax
@@ -965,7 +950,7 @@ LOCAL e1, e2, e3, e4
 
     jmp e4
     e1:
-        bala_griss enemigos, posicion
+        bala_griss
         mov al, balas[3]
         cmp al, 49
         je e2
@@ -975,14 +960,14 @@ LOCAL e1, e2, e3, e4
     jmp e4
     ;=====================bala morada=====================
     e2:
-        bala_morada enemigos, posicion
+        bala_morada
         mov al, balas[6]
         cmp al, 49
         je e3
     jmp e4
     ;===================bala roja===========================
     e3:
-        bala_roja enemigos, posicion
+        bala_roja 
         jmp e4
     e4:
     pop si
@@ -990,7 +975,7 @@ LOCAL e1, e2, e3, e4
     pop bx
 ENDM
 
-bala_griss MACRO enemigos, posicion
+bala_griss MACRO 
 LOCAL esc0, e11, e111, ciclo1,suma, esc1, esc2, ler, lee, sc1, scr1, scr2, scr4, rango, nocolison, elimino, dibujo_eliminacion, ociclo1, validar, f1, f2, f3, s1, s2,f4,f5,f6,f7,f8,f9
     push bx 
     push ax
@@ -1231,7 +1216,7 @@ LOCAL esc0, e11, e111, ciclo1,suma, esc1, esc2, ler, lee, sc1, scr1, scr2, scr4,
     pop bx
 ENDM
 
-bala_morada MACRO enemigos, posicion
+bala_morada MACRO
 LOCAL esc0, e4, e11, e111, ciclo1,suma, esc1,ler, lee, esc2, sc1, scr1, scr2, scr4, rango, nocolison, elimino, dibujo_eliminacion, ociclo1, validar, f1, f2, f3, s1, s2, f4,f5,f6,f7,f8,f9
     push bx 
     push ax
@@ -1470,7 +1455,7 @@ LOCAL esc0, e4, e11, e111, ciclo1,suma, esc1,ler, lee, esc2, sc1, scr1, scr2, sc
     pop bx
 ENDM
 
-bala_roja MACRO enemigos, posicion
+bala_roja MACRO
 LOCAL esc0, e4, e11, e111, ciclo1,suma, esc1,ler, lee, esc2, sc1, scr1, scr2, scr4, rango, nocolison, elimino, dibujo_eliminacion, ociclo1, validar, f1, f2, f3, s1, s2, f4,f5,f6,f7,f8,f9
     push bx 
     push ax
@@ -1711,7 +1696,7 @@ ENDM
 
 
 
-Bajar_Enemigos MACRO enemigos, posicion, retardo
+Bajar_Enemigos MACRO
 LOCAL e1, e2, e3, e4, e5, vernivel1, vernivel2, finnivel2, finnivel3,vernivel3, resetcote, busco, select, v1, v2, v0, finnivel1
     push ax
     push si
@@ -1738,7 +1723,7 @@ LOCAL e1, e2, e3, e4, e5, vernivel1, vernivel2, finnivel2, finnivel3,vernivel3, 
     jmp e4
 
     vernivel2:
-        mov al, enemigos[80]
+        mov al, enemigos[82]
         cmp al, 48
         je finnivel2
         jmp busco
@@ -1748,7 +1733,7 @@ LOCAL e1, e2, e3, e4, e5, vernivel1, vernivel2, finnivel2, finnivel3,vernivel3, 
     jmp e4
 
     vernivel3:
-        mov al, enemigos[120]
+        mov al, enemigos[124]
         cmp al, 48
         je finnivel3
         jmp busco
@@ -1956,6 +1941,8 @@ Local Ciclo1, Ciclo3, Ciclo2, fin
     jmp Ciclo3
 
     fin: 
+    mov arreglo[41], 36
+
     pop si
 ENDM
 
@@ -2008,6 +1995,9 @@ Local Ciclo1, Ciclo3, Ciclo2, fin, otra, cmpe, InicioC2, InicioC3
             sub templlenado, 16
         cmp otravez, 2
     jne otra
+
+    mov arreglo[83], 36
+
     pop bx	
     pop si
 ENDM
@@ -2020,7 +2010,7 @@ Local Ciclo1, Ciclo3, Ciclo2, fin, otra, cmpe, InicioC2, InicioC3
     xor bx, bx
     xor si, si
     mov otravez, 0
-    mov templlenado, 90
+    mov templlenado, 138
     otra:
         inc otravez
         mov siaux, 0
@@ -2062,6 +2052,9 @@ Local Ciclo1, Ciclo3, Ciclo2, fin, otra, cmpe, InicioC2, InicioC3
             sub templlenado, 16
         cmp otravez, 3
     jne otra
+
+    mov arreglo[125], 36
+
     pop bx	
     pop si
 ENDM
@@ -2219,9 +2212,10 @@ LOCAL e1, e2, e3, e5, final, ef1, ef3
         cmp oaux3, 2
     jne e5
 
-    Llenar_Posicion2 posicion_enemigos2
-    LLenarArreglo enemigos_nivel2, 49d
+    Llenar_Posicion2 posicion
+    LLenarArreglo enemigos, 49d
     mov level, 50
+    mov retardo, 175
     ImprimirPantalla 7d, 8d, level
     ImprimirPantalla 22d, 0d, limpia1
     ImprimirPantalla 22d, 0d, msg_start1
@@ -2329,9 +2323,10 @@ LOCAL e1, e2, e3, e5, final, ef1, ef3
         cmp oaux3, 3
     jne e5
 
-    Llenar_Posicion3 posicion_enemigos3
-    LLenarArreglo enemigos_nivel3, 49d
+    Llenar_Posicion3 posicion
+    LLenarArreglo enemigos, 49d
     mov level, 51
+    mov retardo, 100
     ImprimirPantalla 7d, 8d, level
     ImprimirPantalla 22d, 0d, limpia1
     ImprimirPantalla 22d, 0d, msg_start1
