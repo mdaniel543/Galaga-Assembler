@@ -484,7 +484,7 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, level1, level2, l
 ENDM
 
 Mover MACRO 
-LOCAL Izquierda, Derecha,level1,level12, level22, level2, l,l2, sigue, Pausa, pe, lev, cambialetras, disparo1
+LOCAL Izquierda, Derecha,level1,level12, level22, disparo2, level2, l,l2, sigue, Pausa, pe, lev, cambialetras, disparo1
 	mov ah,01h
 	int 16h
 	cmp al,97
@@ -495,6 +495,8 @@ LOCAL Izquierda, Derecha,level1,level12, level22, level2, l,l2, sigue, Pausa, pe
     je Pausa
     cmp al, 118; v
     je disparo1
+    cmp al, 98; b
+    je disparo2
     jmp sigue
     Izquierda:
         cmp level, 49
@@ -528,6 +530,11 @@ LOCAL Izquierda, Derecha,level1,level12, level22, level2, l,l2, sigue, Pausa, pe
         jmp sigue
     disparo1:
         Canon1_disparo
+        mov ah, 00h
+        int 16h
+        jmp sigue 
+    disparo2:
+        Canon2_disparo
         mov ah, 00h
         int 16h
         jmp sigue 
@@ -739,8 +746,42 @@ LOCAL e1, e2, e3, e4
     pop ax
 ENDM
 
+Canon2_disparo MACRO 
+LOCAL e1, e2, e3, e4
+    push ax
+    xor ax, ax
+
+    mov al, balas[3]
+    cmp al, 49d
+    je e3
+
+    cmp level, 50
+    jb e3
+
+    mov balas[3], 49d
+    
+    xor ax, ax
+    
+    sub cIzqy, 5
+    mov ax, cIzqy
+    mov balas[4], al
+    mov suplente, ax
+    
+    Dibujar_Bala cIzqx, suplente, 5d
+
+    mov ax, cIzqx
+    
+    mov ab, ax
+    sub ab, 100d
+    mov ax, ab
+    mov balas[5], al
+    
+    e3:
+    pop ax
+ENDM
+
 subir_balas MACRO enemigos, posicion
-LOCAL e1, e2, e3, e4, e11, e111, ciclo1,suma, esc1, esc2, sc1, scr1, scr2, scr4, rango, nocolison, elimino, dibujo_eliminacion, ociclo1, validar, f1, f2, f3, s1, s2
+LOCAL e1, e2, e3, e4
     push bx 
     push ax
     push si
@@ -760,212 +801,511 @@ LOCAL e1, e2, e3, e4, e11, e111, ciclo1,suma, esc1, esc2, sc1, scr1, scr2, scr4,
 
     jmp e4
     e1:
-        ;============borro bala grisss=============
-        mov al, balas[1]
-        cmp al, 3
-        je e11
+        bala_griss enemigos, posicion
+        mov al, balas[3]
+        cmp al, 49
+        je e2
+        mov al, balas[6]
+        cmp al, 49
+        je e3
+    jmp e4
+    ;=====================bala morada=====================
+    e2:
+        bala_morada enemigos, posicion
+        mov al, balas[6]
+        cmp al, 49
+        je e3
+    jmp e4
+    ;===================bala roja===========================
+    e3:
         
+        jmp e4
+    e4:
+    pop si
+    pop ax
+    pop bx
+ENDM
+
+bala_griss MACRO enemigos, posicion
+LOCAL esc0, e11, e111, ciclo1,suma, esc1, esc2, ler, lee, sc1, scr1, scr2, scr4, rango, nocolison, elimino, dibujo_eliminacion, ociclo1, validar, f1, f2, f3, s1, s2,f4,f5,f6,f7,f8,f9
+    push bx 
+    push ax
+    push si
+    xor ax, ax
+    xor bx, bx
+    xor si, si
+
+    mov al, balas[1]
+    cmp al, 3
+    je e11
+    
+    mov bl, balas[2]
+
+    mov auxbala1, bx
+    add auxbala1, 100
+
+    mov auxbala2, ax
+    
+    Dibujar_Bala  auxbala1, auxbala2, 0d
+
+    sub auxbala2, 1
+
+    mov ax, auxbala2
+    mov auxcolision2, ax 
+    sub auxcolision2, 8
+
+    mov auxcolision, ax
+
+    xor bx, bx
+    mov siaux, 0
+
+    ;====compruebo si la nueva posicion colisona =======
+    delay 75
+    ciclo1:
+        mov bl, posicion[si]
+        cmp bl, 36
+        je nocolison
+        cmp auxcolision2, bx
+        ja sc1	
+        cmp auxcolision, bx
+        jae validar
+        sc1:
+        inc si 
+        inc si 
+        inc siaux 
+    jmp ciclo1
+    ;=============hago validaciones de la colision===========
+    validar:
+        push siaux
+
+        mov al, enemigos[si]
+        cmp al, 48
+        je ociclo1
+        
+        mov cote1, 0
+        mov cote2, 0
+
+        cmp siaux, 7
+        jb dibujo_eliminacion
+        cmp siaux, 14
+        jb f2
+        cmp siaux, 21
+        jb f3
+        cmp siaux, 28
+        jb f4
+        cmp siaux, 35
+        jb f5
+        cmp siaux, 42
+        jb f6
+        cmp siaux, 49
+        jb f7
+        cmp siaux, 56
+        jb f8
+        cmp siaux, 63
+        jb f9
+        f2: 
+            sub siaux, 7
+            jmp dibujo_eliminacion
+        f3: 
+            sub siaux, 14     
+            jmp dibujo_eliminacion
+        f4: 
+            sub siaux, 21
+            jmp dibujo_eliminacion
+        f5: 
+            sub siaux, 28     
+            jmp dibujo_eliminacion
+        f6: 
+            sub siaux, 35
+            jmp dibujo_eliminacion
+        f7: 
+            sub siaux, 42    
+            jmp dibujo_eliminacion
+        f8: 
+            sub siaux, 49
+            jmp dibujo_eliminacion
+        f9: 
+            sub siaux, 56
+            jmp dibujo_eliminacion
+
+        ;=============veo de que enemigo se trata=============
+        dibujo_eliminacion:
+            inc siaux
+            mov al, 30d
+            mul siaux
+            mov cote2, ax
+            add cote2, 85d 
+
+            mov bx, cote2
+            cmp auxbala1, bx
+            jb ociclo1
+
+            mov cote1, bx
+            add cote1, 8
+            mov bx, cote1 
+
+            cmp auxbala1, bx
+            ja ociclo1
+            ;=====el enemigo ya localizado comprabamos su vida======
+            inc si
+            mov al, posicion[si]
+            cmp al, 1
+            je s2
+            sub al, 1
+            mov posicion[si], al  
+            jmp s1
+            s2:
+            dec si 
+            ;=======================================================
+            mov al,  posicion[si]
+            mov contaux1, ax
+
+            Dibujar_enemigo cote2, contaux1, 0d
+            mov enemigos[si], 48
+
+            pop siaux
+            push ax
+            cmp siaux, 56
+            jae esc2
+            cmp siaux, 49
+            jae esc1
+            cmp siaux, 42
+            jae esc0
+            cmp siaux, 35
+            jae esc2    
+            cmp siaux, 28
+            jae esc1
+            cmp siaux, 21
+            jae esc0
+            cmp siaux, 14
+            jae esc2
+            cmp siaux, 7
+            jae esc1
+        
+        esc0:
+            mov decsuma, 1
+            jmp suma
+
+        esc1:
+            mov decsuma, 2
+            jmp suma
+        esc2:
+            mov decsuma, 3
+            jmp suma
+
+        suma:
+            mov al, score[2]
+            cmp al, 57
+            je scr1
+            add al, 1
+            mov score[2], al
+            jmp scr4
+            scr1:
+            mov score[2], 48
+            mov al, score[1]
+            cmp al, 57
+            je scr2
+            add al, 1
+            mov score[1], al
+            jmp scr4
+            scr2:
+            mov score[1], 48
+            mov al, score[0]
+            add al, 1
+            mov score[0], al
+        scr4:
+            sub decsuma, 1
+            cmp decsuma, 0
+        ja suma
+            pop ax
+            call DS_VIDEO ;Cambio de DS a memoria de video
+            xor ax, ax
+            mov ah, 02h
+            mov bh, 00h
+            mov dh, 11d ;23 fil
+            mov dl, 7d ;118 col
+            int 10h
+            call DS_DATOS ;Cambia de DS al lugar de las variables
+            print score
+
+            mov balas[0], 48
+        jmp e111
+        s1:
+            mov balas[0], 48
+            pop siaux
+        jmp e111
+
+        ociclo1:
+            pop siaux
+            inc si
+            inc si
+            inc siaux
+        jmp ciclo1
+    ;============sigo normal con la subida de la bala
+    nocolison:
+        Dibujar_Bala auxbala1, auxbala2, 7d
+
+        mov ax, auxbala2
+        mov balas[1], al
+
+    jmp e111
+    e11:
+        mov balas[0], 48
+
         mov bl, balas[2]
 
         mov auxbala1, bx
         add auxbala1, 100
 
         mov auxbala2, ax
-       
+    
         Dibujar_Bala  auxbala1, auxbala2, 0d
+    e111:
 
-        sub auxbala2, 1
-
-        mov ax, auxbala2
-        mov auxcolision2, ax 
-        sub auxcolision2, 8
-
-        mov auxcolision, ax
-
-        xor bx, bx
-        mov siaux, 0
-
-        ;====compruebo si la nueva posicion colisona =======
-        delay 75
-        ciclo1:
-            mov bl, posicion[si]
-            cmp auxcolision2, bx
-            ja sc1	
-            cmp auxcolision, bx
-            jae validar
-            sc1:
-            cmp siaux, 20d
-            jae nocolison
-            inc si 
-            inc si 
-            inc siaux 
-        jmp ciclo1
-        ;=============hago validaciones de la colision===========
-        validar:
-            push siaux
-
-            mov al, enemigos[si]
-            cmp al, 48
-            je ociclo1
-            
-            mov cote1, 0
-            mov cote2, 0
-
-            cmp siaux, 7
-            jb dibujo_eliminacion
-            cmp siaux, 14
-            jb f2
-            cmp siaux, 21
-            jb f3
-            f2: 
-                sub siaux, 7
-                jmp dibujo_eliminacion
-            f3: 
-                sub siaux, 14     
-                jmp dibujo_eliminacion
-            ;=============veo de que enemigo se trata=============
-            dibujo_eliminacion:
-                inc siaux
-                mov al, 30d
-                mul siaux
-                mov cote2, ax
-                add cote2, 85d 
-
-                mov bx, cote2
-                cmp auxbala1, bx
-                jb ociclo1
-
-                mov cote1, bx
-                add cote1, 8
-                mov bx, cote1 
-
-                cmp auxbala1, bx
-                ja ociclo1
-                ;=====el enemigo ya localizado comprabamos su vida======
-                inc si
-                mov al, posicion[si]
-                cmp al, 1
-                je s2
-                sub al, 1
-                mov posicion[si], al  
-                jmp s1
-                s2:
-                dec si 
-                ;=======================================================
-                mov al,  posicion[si]
-                mov contaux1, ax
-
-                Dibujar_enemigo cote2, contaux1, 0d
-                mov enemigos[si], 48
-
-                pop siaux
-                push ax
-                cmp siaux, 14
-                jae esc2
-                cmp siaux, 7
-                jae esc1
-            
-                mov decsuma, 1
-                jmp suma
-
-            esc1:
-                mov decsuma, 2
-                jmp suma
-            esc2:
-                mov decsuma, 3
-                jmp suma
-
-            suma:
-                mov al, score[2]
-                cmp al, 57
-                je scr1
-                add al, 1
-                mov score[2], al
-                jmp scr4
-                scr1:
-                mov score[2], 48
-                mov al, score[1]
-                cmp al, 57
-                je scr2
-                add al, 1
-                mov score[1], al
-                jmp scr4
-                scr2:
-                mov score[1], 48
-                mov al, score[0]
-                add al, 1
-                mov score[0], al
-            scr4:
-                sub decsuma, 1
-                cmp decsuma, 0
-            ja suma
-                pop ax
-                call DS_VIDEO ;Cambio de DS a memoria de video
-                xor ax, ax
-                mov ah, 02h
-                mov bh, 00h
-                mov dh, 11d ;23 fil
-                mov dl, 7d ;118 col
-                int 10h
-                call DS_DATOS ;Cambia de DS al lugar de las variables
-                print score
-
-                mov balas[0], 48
-            jmp e111
-            s1:
-                mov balas[0], 48
-                pop siaux
-            jmp e111
-
-            ociclo1:
-                pop siaux
-                inc si
-                inc si
-                inc siaux
-            jmp ciclo1
-        ;============sigo normal con la subida de la bala
-        nocolison:
-            Dibujar_Bala auxbala1, auxbala2, 7d
-
-            mov ax, auxbala2
-            mov balas[1], al
-
-        jmp e111
-        e11:
-            mov balas[0], 48
-
-            mov bl, balas[2]
-
-            mov auxbala1, bx
-            add auxbala1, 100
-
-            mov auxbala2, ax
-        
-            Dibujar_Bala  auxbala1, auxbala2, 0d
-        e111:
-            mov al, balas[3]
-            cmp al, 49
-            je e2
-            mov al, balas[6]
-            cmp al, 49
-            je e3
-    jmp e4
-    e2:
-
-
-        mov al, balas[6]
-        cmp al, 49
-        je e3
-    jmp e4
-    e3:
-
-    jmp e4
-
-    e4:
     pop si
     pop ax
     pop bx
 ENDM
+
+bala_morada MACRO enemigos, posicion
+LOCAL esc0, e4, e11, e111, ciclo1,suma, esc1,ler, lee, esc2, sc1, scr1, scr2, scr4, rango, nocolison, elimino, dibujo_eliminacion, ociclo1, validar, f1, f2, f3, s1, s2, f4,f5,f6,f7,f8,f9
+    push bx 
+    push ax
+    push si
+    xor ax, ax
+    xor bx, bx
+    xor si, si
+    ;============borro bala morada=============
+    mov al, balas[4]
+    cmp al, 3
+    je e11
+    
+    mov bl, balas[5]
+
+    mov auxbala1, bx
+    add auxbala1, 100
+
+    mov auxbala2, ax
+    
+    Dibujar_Bala  auxbala1, auxbala2, 0d
+
+    sub auxbala2, 1
+
+    mov ax, auxbala2
+    mov auxcolision2, ax 
+    sub auxcolision2, 8
+
+    mov auxcolision, ax
+
+    xor bx, bx
+    mov siaux, 0
+
+    ;====compruebo si la nueva posicion colisona =======
+    delay 75
+    ciclo1:
+        mov bl, posicion[si]
+        cmp bl, 36
+        je nocolison
+        cmp auxcolision2, bx
+        ja sc1	
+        cmp auxcolision, bx
+        jae validar
+        sc1:
+        lee:
+        inc si 
+        inc si 
+        inc siaux 
+    jmp ciclo1
+    ;=============hago validaciones de la colision===========
+    validar:
+        push siaux
+
+        mov al, enemigos[si]
+        cmp al, 48
+        je ociclo1
+        
+        mov cote1, 0
+        mov cote2, 0
+
+        cmp siaux, 7
+        jb dibujo_eliminacion
+        cmp siaux, 14
+        jb f2
+        cmp siaux, 21
+        jb f3
+        cmp siaux, 28
+        jb f4
+        cmp siaux, 35
+        jb f5
+        cmp siaux, 42
+        jb f6
+        cmp siaux, 49
+        jb f7
+        cmp siaux, 56
+        jb f8
+        cmp siaux, 63
+        jb f9
+        f2: 
+            sub siaux, 7
+            jmp dibujo_eliminacion
+        f3: 
+            sub siaux, 14     
+            jmp dibujo_eliminacion
+        f4: 
+            sub siaux, 21
+            jmp dibujo_eliminacion
+        f5: 
+            sub siaux, 28     
+            jmp dibujo_eliminacion
+        f6: 
+            sub siaux, 35
+            jmp dibujo_eliminacion
+        f7: 
+            sub siaux, 42    
+            jmp dibujo_eliminacion
+        f8: 
+            sub siaux, 49
+            jmp dibujo_eliminacion
+        f9: 
+            sub siaux, 56
+            jmp dibujo_eliminacion
+        ;=============veo de que enemigo se trata=============
+        dibujo_eliminacion:
+            inc siaux
+            mov al, 30d
+            mul siaux
+            mov cote2, ax
+            add cote2, 85d 
+
+            mov bx, cote2
+            cmp auxbala1, bx
+            jb ociclo1
+
+            mov cote1, bx
+            add cote1, 8
+            mov bx, cote1 
+
+            cmp auxbala1, bx
+            ja ociclo1
+            ;=====el enemigo ya localizado comprabamos su vida======
+            inc si
+            mov al, posicion[si]
+            cmp al, 2
+            jbe s2
+            sub al, 2
+            mov posicion[si], al  
+            jmp s1
+            s2:
+            dec si 
+            ;=======================================================
+            mov al,  posicion[si]
+            mov contaux1, ax
+
+            Dibujar_enemigo cote2, contaux1, 0d
+            mov enemigos[si], 48
+
+            pop siaux
+            push ax
+            cmp siaux, 56
+            jae esc2
+            cmp siaux, 49
+            jae esc1
+            cmp siaux, 42
+            jae esc0
+            cmp siaux, 35
+            jae esc2    
+            cmp siaux, 28
+            jae esc1
+            cmp siaux, 21
+            jae esc0
+            cmp siaux, 14
+            jae esc2
+            cmp siaux, 7
+            jae esc1
+        
+        esc0:
+            mov decsuma, 1
+            jmp suma
+
+        esc1:
+            mov decsuma, 2
+            jmp suma
+        esc2:
+            mov decsuma, 3
+            jmp suma
+
+       suma:
+            mov al, score[2]
+            cmp al, 57
+            je scr1
+            add al, 1
+            mov score[2], al
+            jmp scr4
+            scr1:
+            mov score[2], 48
+            mov al, score[1]
+            cmp al, 57
+            je scr2
+            add al, 1
+            mov score[1], al
+            jmp scr4
+            scr2:
+            mov score[1], 48
+            mov al, score[0]
+            add al, 1
+            mov score[0], al
+        scr4:
+            sub decsuma, 1
+            cmp decsuma, 0
+        ja suma
+            pop ax
+            call DS_VIDEO ;Cambio de DS a memoria de video
+            xor ax, ax
+            mov ah, 02h
+            mov bh, 00h
+            mov dh, 11d ;23 fil
+            mov dl, 7d ;118 col
+            int 10h
+            call DS_DATOS ;Cambia de DS al lugar de las variables
+            print score
+
+            mov balas[3], 48
+        jmp e111
+        s1:
+            mov balas[3], 48
+            pop siaux
+        jmp e111
+
+        ociclo1:
+            pop siaux
+            inc si
+            inc si
+            inc siaux
+        jmp ciclo1
+    ;============sigo normal con la subida de la bala
+    nocolison:
+        Dibujar_Bala auxbala1, auxbala2, 5d
+
+        mov ax, auxbala2
+        mov balas[4], al
+    jmp e111
+    e11:
+        mov balas[4], 48
+
+        mov bl, balas[5]
+
+        mov auxbala1, bx
+        add auxbala1, 100
+
+        mov auxbala2, ax
+    
+        Dibujar_Bala  auxbala1, auxbala2, 0d
+    e111:
+    pop si
+    pop ax
+    pop bx
+ENDM
+
 
 Bajar_Enemigos MACRO enemigos, posicion, retardo
 LOCAL e1, e2, e3, e4, e5, vernivel1, vernivel2, finnivel2, resetcote, busco, select, v1, v2, v0, finnivel1
@@ -979,6 +1319,8 @@ LOCAL e1, e2, e3, e4, e5, vernivel1, vernivel2, finnivel2, resetcote, busco, sel
     cmp level, 49
     je vernivel1
     cmp level, 50
+    je vernivel2
+    cmp level, 51
     je vernivel2
 
     vernivel1:
@@ -998,7 +1340,8 @@ LOCAL e1, e2, e3, e4, e5, vernivel1, vernivel2, finnivel2, resetcote, busco, sel
         jmp busco
 
     finnivel2:
-        jmp e4
+        Inicio_Nivel3
+    jmp e4
 
     resetcote:
         mov cote1, 0
