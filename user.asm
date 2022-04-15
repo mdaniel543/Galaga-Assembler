@@ -1,5 +1,6 @@
 MenUsuario MACRO
 LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9
+    LeerScore
     e1:
         print msgUsermenu
         print bufferU
@@ -21,8 +22,14 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9
         call EmpiezaJuego_proc
         jmp e1
     e3:
+        limpiar
+        Inicio_Marcador
+        limpiar
         jmp e1
     e4:
+        limpiar
+        Inicio_Mi_Marcador
+        limpiar
         jmp e1
     e5:
         limpiar
@@ -472,6 +479,7 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, level1, level2, l, level3
     jmp e1
 
     e10:
+        GuardarScore 
 ENDM
 
 Mover MACRO 

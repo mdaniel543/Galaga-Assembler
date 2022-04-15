@@ -2,7 +2,7 @@ INCLUDE arch.asm
 INCLUDE user.asm
 INCLUDE admin.asm
 INCLUDE main.asm
-INCLUDE nvl1.asm
+INCLUDE scr.asm
 
 .model small
 .stack 
@@ -197,6 +197,38 @@ INCLUDE nvl1.asm
     auxvida dw 0, '$'
     templlenado db 0, '$'
     retardo dw 0, '$'
+
+    ;==================reporte scores==================
+    ArchivoRutaScore db 'scores.gal', 00h, '$'
+    ArchivoHandlerScore dw ?, '$'
+    scores db 1000 dup('$'),'$'
+    scoresOrdenados db 1000 dup('$'),'$'
+
+    msgMarcador1 db 0ah, 0dh, 'Top 10 Marcador                         USER: ', '$'
+    msgLine2     db           '=============================================================', 0ah, 0dh, '$'
+    msgMarcador11 db 0ah, 0dh, 'Mi Top 10 Marcador                     USER: ', '$'
+    msgMarcador2 db 0ah, 0dh, 'Rango     Jugador             N     Puntos     Tiempo ', 0ah, 0dh, '$'
+    
+    msgline_     db 0ah, 0dh, '_____________________________________________________________', 0ah, 0dh, '$'
+
+    msgenterCo   db 0ah, 0dh, '>>             PRESIONA ENTER PARA VOLVER A MENU           <<', 0ah, 0dh, '$'
+
+    auxScores db 50 dup('$'), '$'
+    indiceScores db 50 dup('$'), '$'
+
+    i db 0, '$'
+    j db 0, '$'
+
+    conteo_scores dw 0, '$'
+
+    conteo_auxiliar dw 0, '$'
+    guardar_inicio_i dw 0, '$'
+    guardar_inicio_j dw 0, '$'
+
+    uaxb  db 0,0,0, '$'
+    auxw  dw 0, '$'
+    auxwi dw 0, '$'
+    auxwj dw 0, '$'
 
 .code 
 

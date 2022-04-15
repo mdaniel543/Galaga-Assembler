@@ -65,7 +65,7 @@ MenuAdmin MACRO
         je asc
         cmp ah, 3Dh; F3 Mis 10 tops
         je des
-        cmp ah, 3Eh; F4 Mis 10 tops
+        cmp ah, 3Eh; play
         je play
         cmp ah, 3Fh; F5 Bubble 
         je bub
@@ -85,6 +85,8 @@ MenuAdmin MACRO
     des:
         jmp fin
     play:
+        mov banderaTerminaJuego, 00h
+        call EmpiezaJuego_proc
         jmp fin
     bub:
         jmp fin
