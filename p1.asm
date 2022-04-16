@@ -213,13 +213,13 @@ INCLUDE scr.asm
 
     msgenterCo   db 0ah, 0dh, '>>             PRESIONA ENTER PARA VOLVER A MENU           <<', 0ah, 0dh, '$'
 
-    auxScores db 50 dup('$'), '$'
-    indiceScores db 50 dup('$'), '$'
+    auxaux db 50 dup('$'), '$'
 
     i db 0, '$'
     j db 0, '$'
 
     conteo_scores dw 0, '$'
+    cont_caracteres dw 0 ,'$'
 
     conteo_auxiliar dw 0, '$'
     guardar_inicio_i dw 0, '$'
@@ -229,6 +229,8 @@ INCLUDE scr.asm
     auxw  dw 0, '$'
     auxwi dw 0, '$'
     auxwj dw 0, '$'
+
+    sd db 0, '$'
 
 .code 
 

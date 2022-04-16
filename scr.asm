@@ -146,8 +146,9 @@ LOCAL e1, e2, e3, e4, e5
         print msgline_
 
         print salto
+        ImprimirArreglo scores
         print salto
-        print salto
+        ImprimirArreglo scoresOrdenados
 
         print msgenterCo
     e2:
@@ -182,33 +183,86 @@ LOCAL e1, e2, e3, e4, e5
 ENDM 
 
 
+ImprimirArreglo MACRO arreglo
+Local Ciclo, jr, jrs
+	xor si,si
+	xor cx,cx
+	mov cx, SIZEOF arreglo
+
+	Ciclo:
+    mov al, arreglo[si]
+    cmp al, 13
+    je jr 
+	mov sd, al
+    print sd
+    jmp jrs
+	jr:
+    print salto
+    jrs:
+    inc si
+	loop Ciclo
+ENDM
+
+ImprimirArreglo2 MACRO arreglo
+Local Ciclo, jr, jrs
+	xor si,si
+    xor ax, ax
+	xor cx,cx
+	mov cx, SIZEOF arreglo
+
+	Ciclo:
+    mov ax, arreglo[si]
+    add al, 48
+	mov sd, al
+    print sd
+
+    inc si
+	loop Ciclo
+
+ENDM
+
+
+
 ObtenerScores MACRO 
-LOCAL e1, e2, e3
+LOCAL e1, e2, e3, e4, e5
     push si
+    push di 
     xor si, si
+    xor di, di
+
     mov conteo_scores, 0
+    mov cont_caracteres, 0
     e1:
-        mov al, scores[si]
+        mov al, scores[di]
         cmp al, 36 
         je e3
         cmp al, 13
         jne e2 
+        mov cont_caracteres, 0
         inc conteo_scores
         e2:
-            mov al, scores[si]
+            cmp al, 44
+            jne e4
+            
+        e4:
+            mov al, scores[di]
             mov scoresOrdenados[si], al
+            inc cont_caracteres
             inc si 
+            inc di 
     jmp e1
     e3:
+    pop di
     pop si 
 ENDM 
 
 
 OrdenarMarcador MACRO 
-Local for1, for2, regfor2, regfor1, res, ciclo_i, ciclo_j, pos_i, punteo_i, ciclo_j
+Local for1, for2, regfor2, regfor1, res, ciclo_i, ciclo_j, pos_i, punteo_i,pos_j, punteo_j, guardar, cambiar, ccambiar, sscar, sacar
     push ax
     push bx
     push si
+    push di 
     xor ax, ax
     xor bx, bx
     xor si, si 
@@ -218,11 +272,13 @@ Local for1, for2, regfor2, regfor1, res, ciclo_i, ciclo_j, pos_i, punteo_i, cicl
     
 
     for1:
+        xor ax, ax
         mov al, i
         cmp ax, conteo_scores
         jae res ; mayor o igual
 
         ;==============obtengo el valor en la posicion i========
+        
         mov conteo_auxiliar, 0
         xor si, si
 
@@ -259,6 +315,8 @@ Local for1, for2, regfor2, regfor1, res, ciclo_i, ciclo_j, pos_i, punteo_i, cicl
         inc si 
         mov al, scoresOrdenados[si]
         mov uaxb[2], al
+
+        print uaxb
         
         SacarPunteo uaxb
         mov bx, auxw
@@ -269,15 +327,15 @@ Local for1, for2, regfor2, regfor1, res, ciclo_i, ciclo_j, pos_i, punteo_i, cicl
         mov j, al
 
         for2:
+            xor ax, ax
             mov al, j
             cmp ax, conteo_scores
             jae regfor1 ; mayor o igual
 
-
-            ;==============obtengo el valor en la posicion i========
+            ;==============obtengo el valor en la posicion j========
             mov conteo_auxiliar, 0
             xor si, si 
-
+            xor ax, ax
             ;============me posicion en el usuario de j============
             ciclo_j:
                 mov al, scoresOrdenados[si]
@@ -308,20 +366,66 @@ Local for1, for2, regfor2, regfor1, res, ciclo_i, ciclo_j, pos_i, punteo_i, cicl
             mov al, scoresOrdenados[si]
             mov uaxb[2], al
             
+            print uaxb
+            Imprimir 44
+
             SacarPunteo uaxb
+            
+            xor bx, bx
             mov bx, auxw
             mov auxwj, bx
 
+            xor ax, ax
+            mov ax, auxwi ; aux[i] < aux[j]
+            cmp ax, auxwj
+            jae regfor2 
+
+
+            LimpiarArreglo auxaux
+            xor si, si
+            xor di, di  
+            mov si, guardar_inicio_i
             
-        
+            guardar:
+                mov al, scoresOrdenados[si]
+                mov auxaux[di], al 
+                inc si 
+                inc di
+                cmp al, 13
+            jne guardar  
+
+                xor si, si
+                xor di, di
+                mov si, guardar_inicio_i
+                mov di, guardar_inicio_j
+
+            ccambiar:
+                mov al, scoresOrdenados[di]
+                mov scoresOrdenados[si], al 
+                inc si 
+                inc di 
+                cmp al,13
+            jne ccambiar
+                xor si, si
+                xor di, di
+                mov si, guardar_inicio_j
+            sscar:
+                mov al, auxaux[di]
+                mov scoresOrdenados[si], al
+                inc si 
+                inc di 
+                cmp al, 13
+            jne sscar
 
             regfor2:
+                xor ax, ax
                 mov al, j
                 add al, 1
                 mov j, al
         jmp for2
 
         regfor1:
+            xor ax, ax
             mov al, i
             add al, 1
             mov i, al
@@ -329,6 +433,7 @@ Local for1, for2, regfor2, regfor1, res, ciclo_i, ciclo_j, pos_i, punteo_i, cicl
 
     res:
 
+    pop di 
     pop si 
     pop bx
     pop ax
