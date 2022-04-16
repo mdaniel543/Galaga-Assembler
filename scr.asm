@@ -135,6 +135,7 @@ ENDM
 Inicio_Marcador MACRO 
 LOCAL e1, e2, e3, e4, e5
     e1:
+        LimpiarArreglo scoresOrdenados
         ObtenerScores
         OrdenarMarcador
 
@@ -159,6 +160,7 @@ ENDM
 Inicio_Mi_Marcador MACRO 
 LOCAL e1, e2, e3, e4, e5
     e1:
+        LimpiarArreglo scoresOrdenados
         ObtenerScores
         OrdenarMarcador
 
@@ -388,6 +390,47 @@ LOCAL e1, e2, e3, e4, e5
     pop si 
 ENDM 
 
+Llenar_Punteos_tiempos MACRO 
+LOCAL e1, e2, e3, e4, e5, e6
+    push si
+    push di
+    LimpiarArreglo punteos
+    LimpiarArreglo tiempos
+    xor di, di
+    xor si, si
+    e1:
+        mov al, scores[si]
+        inc si
+        cmp al, 59
+        je e5
+        cmp al, 36 
+        je e3
+    jmp e1
+
+        e5: ;punteo
+            mov al, scores[si]
+            mov temporall[0], al
+            inc si 
+            mov al, scores[si]
+            mov temporall[1], al
+            inc si 
+            mov al, scores[si]
+            mov temporall[2], al
+
+            SacarPunteo temporall
+            mov bx, auxw
+            mov punteos[di], bl
+
+        inc si 
+        inc di
+    jmp e1
+    
+
+    e3:
+    pop di 
+    pop si 
+ENDM 
+
 
 OrdenarMarcador MACRO 
 Local for1, for2, regfor2, regfor1, res, ciclo_i, ciclo_j, pos_i, punteo_i,pos_j, punteo_j, guardar, cambiar, ccambiar, sscar, sacar
@@ -602,6 +645,70 @@ LOCAL d, u, f
         sub al, 48
         mov bl, 1
         mul bl
+        add auxw, ax
+    f: 
+    pop bx   
+    pop ax
+ENDM
+
+
+
+SacarTime MACRO sc
+LOCAL d, u, f, mm, m, c
+    push ax
+    push bx
+
+    xor ax, ax
+    xor bx, bx 
+    mov auxw, 0
+
+    mm:
+        mov ax, sc[0]
+        cmp al, 48
+        je m
+
+        sub ax, 48
+        mov bx, 10000
+        mul bx
+        mov auxw, ax
+
+    m:
+        mov ax, sc[1]
+        cmp al, 48
+        je c
+
+        sub ax, 48
+        mov bx, 1000
+        mul bx
+        add auxw, ax
+
+    c:
+        mov ax, sc[2]
+        cmp al, 48
+        je d
+
+        sub ax, 48
+        mov bx, 100
+        mul bx
+        add auxw, ax
+
+    d:
+        mov ax, sc[3]
+        cmp al, 48
+        je u
+        
+        sub ax, 48
+        mov bx, 10
+        mul bx
+        add auxw, ax
+    u:
+        mov ax, sc[4]
+        cmp al, 48
+        je f
+
+        sub ax, 48
+        mov bx, 1
+        mul bx
         add auxw, ax
     f: 
     pop bx   

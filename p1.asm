@@ -3,6 +3,7 @@ INCLUDE user.asm
 INCLUDE admin.asm
 INCLUDE main.asm
 INCLUDE scr.asm
+INCLUDE ord.asm
 
 .model small
 .stack 
@@ -236,6 +237,37 @@ INCLUDE scr.asm
     sangria1 db 32,32,32,32,32,32,32,32,32, '$'
     sangria2 db 32,32,32,32,32, '$'
 
+    ;================ordenamientos===============
+    msg01 db 0ah, 0dh, 'Ordenamiento de burbuja               USER:', '$'
+    msg02 db 0ah, 0dh, 'Ordenamiento por monticulos           USER:', '$'
+    msg03 db 0ah, 0dh, 'TimSort                               USER:', '$'  
+
+
+    msgsubMenu  db 0ah, 0dh, 'F1. Ascendente', 0ah, 0dh, 'F2. Descendente', 0ah, 0dh, 'F9. Regresar', 0ah, 0dh, '$'
+
+    msgSubMenu2 db 0ah, 0dh, 'F1. Puntos', 0ah, 0dh, 'F2. Tiempo', 0ah, 0dh, 'F9. Regresar', 0ah, 0dh, '$'
+
+    msgSubMenu3 db 0ah, 0dh, 'F1. 0', 0ah, 0dh, 'F2. 1', 0ah, 0dh, 'F3. 2', 0ah, 0dh,'F4. 3', 0ah, 0dh,'F5. 4', 0ah, 0dh,'F6. 5', 0ah, 0dh,'F7. 6', 0ah, 0dh,'F8. 7', 0ah, 0dh, 'F9. Regresar', 0ah, 0dh, '$'
+
+    banderaPuntos db 00h, '$'
+    banderaTiempo db 00h, '$'
+    banderaAscendente db 00h, '$'
+    banderaDescendente db 00h, '$'
+
+    velocidad dw 0, '$'
+
+    punteos db 100 dup('$'), '$'
+    tiempos dw 55 dup('$'), '$'
+    temporall db 0,0,0, '$'
+    temporatt dw ?, '$'
+
+    obtengo dw 48,48,48, '$'
+    obte db 0, '$'
+    pe db 0, '$'
+
+    teste db 10 dup('$'), '$'
+    auxiliar_burbuja1 db 0, '$'
+    auxiliar_burbuja2 db 0, '$'
 
 .code 
 

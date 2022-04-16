@@ -1,6 +1,13 @@
 MenuAdminGeneral MACRO 
 Local desb, asc, des, bub, hea, tim, lout, fin, Menue, f
+    LeerScore
+    Llenar_Punteos_tiempos
     Menue:
+        mov banderaPuntos, 00h
+        mov banderaTiempo, 00h
+        mov banderaAscendente, 00h
+        mov banderaDescendente, 00h
+        mov velocidad, 0
         print msgAdminMenu
         print bufferU
         print salto
@@ -21,7 +28,8 @@ Local desb, asc, des, bub, hea, tim, lout, fin, Menue, f
         je tim
         cmp ah, 43h; F9 Logut
         je lout
-        jmp Menue
+        limpiar
+    jmp Menue
     desb:
         limpiar
         Desbloquear
@@ -35,10 +43,16 @@ Local desb, asc, des, bub, hea, tim, lout, fin, Menue, f
         Descender
         jmp fin
     bub:
+        limpiar
+        Menu_Burbuja
         jmp fin
     hea: 
+        limpiar
+        Menu_Heap
         jmp fin
     tim:
+        limpiar
+        Menu_Tim
         jmp fin
     lout:
         jmp f
@@ -51,8 +65,15 @@ Local desb, asc, des, bub, hea, tim, lout, fin, Menue, f
 ENDM
 
 MenuAdmin MACRO
-    Local desb, asc, des, bub, hea, tim, lout, fin, Menue, f
+Local desb, asc, des, bub, hea, tim, lout, fin, Menue, f
+    LeerScore
+    Llenar_Punteos_tiempos
     Menue:
+        mov banderaPuntos, 00h
+        mov banderaTiempo, 00h
+        mov banderaAscendente, 00h
+        mov banderaDescendente, 00h
+        mov velocidad, 0
         print msgAdminMenu
         print bufferU
         print salto
@@ -75,24 +96,37 @@ MenuAdmin MACRO
         je tim
         cmp ah, 43h; F9 Logut
         je lout
-        jmp Menue
+        limpiar
+    jmp Menue
     desb:
         limpiar
         Desbloquear
         jmp fin
     asc:
+        limpiar
+        Inicio_Marcador
+        limpiar
         jmp fin
     des:
+        limpiar
+        Inicio_Mi_Marcador
+        limpiar
         jmp fin
     play:
         mov banderaTerminaJuego, 00h
         call EmpiezaJuego_proc
         jmp fin
     bub:
+        limpiar
+        Menu_Burbuja
         jmp fin
     hea: 
+        limpiar
+        Menu_Heap
         jmp fin
     tim:
+        limpiar
+        Menu_Tim
         jmp fin
     lout:
         jmp f
