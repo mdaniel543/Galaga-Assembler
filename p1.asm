@@ -207,7 +207,7 @@ INCLUDE scr.asm
     msgMarcador1 db 0ah, 0dh, 'Top 10 Marcador                         USER: ', '$'
     msgLine2     db           '=============================================================', 0ah, 0dh, '$'
     msgMarcador11 db 0ah, 0dh, 'Mi Top 10 Marcador                     USER: ', '$'
-    msgMarcador2 db 0ah, 0dh, 'Rango     Jugador             N     Puntos     Tiempo ', 0ah, 0dh, '$'
+    msgMarcador2 db 0ah, 0dh, 'Rango     Jugador             N    Puntos      Tiempo ', 0ah, 0dh, '$'
     
     msgline_     db 0ah, 0dh, '_____________________________________________________________', 0ah, 0dh, '$'
 
@@ -231,6 +231,11 @@ INCLUDE scr.asm
     auxwj dw 0, '$'
 
     sd db 0, '$'
+    caracterP db 0, '$'
+    rank db 48, '$'
+    sangria1 db 32,32,32,32,32,32,32,32,32, '$'
+    sangria2 db 32,32,32,32,32, '$'
+
 
 .code 
 

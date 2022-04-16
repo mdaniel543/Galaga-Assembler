@@ -146,9 +146,8 @@ LOCAL e1, e2, e3, e4, e5
         print msgline_
 
         print salto
-        ImprimirArreglo scores
-        print salto
-        ImprimirArreglo scoresOrdenados
+        Mostrar_Marcador
+        print salto 
 
         print msgenterCo
     e2:
@@ -161,7 +160,7 @@ Inicio_Mi_Marcador MACRO
 LOCAL e1, e2, e3, e4, e5
     e1:
         ObtenerScores
-        OrdenarMiMarcador
+        OrdenarMarcador
 
         print msgMarcador11
         print bufferU
@@ -171,9 +170,8 @@ LOCAL e1, e2, e3, e4, e5
         print msgline_
 
         print salto
-        print salto
-        print salto
-
+        Mostrar_Mi_Marcador
+        print salto 
 
         print msgenterCo
     e2:
@@ -203,25 +201,153 @@ Local Ciclo, jr, jrs
 	loop Ciclo
 ENDM
 
-ImprimirArreglo2 MACRO arreglo
-Local Ciclo, jr, jrs
-	xor si,si
-    xor ax, ax
-	xor cx,cx
-	mov cx, SIZEOF arreglo
+Mostrar_Marcador MACRO 
+LOCAL coma, puntoycoma, comilla, enter, usuario, us, tiempo, siguiente, fin
+    push si
+    xor si, si
+    mov rank, 49
 
-	Ciclo:
-    mov ax, arreglo[si]
-    add al, 48
-	mov sd, al
-    print sd
+    usuario:
+        print rank
+        print sangria1
+    us:
+        mov al, scoresOrdenados[si]
+        inc si
+        cmp al, 44
+        je coma
+        mov caracterP, al
+        print caracterP
+    jmp us
 
-    inc si
-	loop Ciclo
+    coma:
+        print sangria2
+        mov al, scoresOrdenados[si]
+        mov caracterP, al
+        print caracterP
+        print sangria2
+        inc si 
+        inc si 
+        mov al, scoresOrdenados[si]
+        mov caracterP, al
+        print caracterP
+        inc si
+        mov al, scoresOrdenados[si]
+        mov caracterP, al
+        print caracterP
+        inc si
+        mov al, scoresOrdenados[si]
+        mov caracterP, al
+        print caracterP
+        inc si
+        inc si
+        print sangria1
+    tiempo:
+        mov al, scoresOrdenados[si]
+        mov caracterP, al
+        inc si 
+        cmp al, 13
+        je siguiente
+        print caracterP
+    jmp tiempo
 
+    siguiente:
+        mov al, scoresOrdenados[si]
+        cmp al, 36
+        je fin
+        add rank, 1
+        print salto
+    jmp usuario
+
+    fin:
+    pop si 
 ENDM
 
+Mostrar_Mi_Marcador MACRO 
+LOCAL coma, puntoycoma, comilla, enter, usuario, us,sup, tiempo,otro_usuario, siguiente, fin
+    push si
+    push di
+    xor si, si
+    xor di, di
+    mov rank, 48
+    
+    push si 
+    siguiente:
+        mov al, scoresOrdenados[si]
+        cmp al, 36
+        je fin 
+        inc si
+        cmp al, 32
+        je siguiente
+        cmp al, 44
+        je usuario
+        cmp al, bufferU[di]
+        jne otro_usuario
+        inc di 
+    jmp siguiente        
 
+
+    otro_usuario: 
+        mov al, scoresOrdenados[si]
+        inc si
+        cmp al, 13
+    jne otro_usuario
+    sup:
+        xor di, di
+        push si
+    jmp siguiente
+
+
+    usuario:
+        pop si 
+        add rank, 1
+        print salto
+        print rank
+        print sangria1
+    us:
+        mov al, scoresOrdenados[si]
+        inc si
+        cmp al, 44
+        je coma
+        mov caracterP, al
+        print caracterP
+    jmp us
+
+    coma:
+        print sangria2
+        mov al, scoresOrdenados[si]
+        mov caracterP, al
+        print caracterP
+        print sangria2
+        inc si 
+        inc si 
+        mov al, scoresOrdenados[si]
+        mov caracterP, al
+        print caracterP
+        inc si
+        mov al, scoresOrdenados[si]
+        mov caracterP, al
+        print caracterP
+        inc si
+        mov al, scoresOrdenados[si]
+        mov caracterP, al
+        print caracterP
+        inc si
+        inc si
+        print sangria1
+
+    tiempo:
+        mov al, scoresOrdenados[si]
+        mov caracterP, al
+        inc si 
+        cmp al, 13
+        je sup
+        print caracterP
+    jmp tiempo
+
+    fin:
+    pop di
+    pop si 
+ENDM
 
 ObtenerScores MACRO 
 LOCAL e1, e2, e3, e4, e5
@@ -231,7 +357,7 @@ LOCAL e1, e2, e3, e4, e5
     xor di, di
 
     mov conteo_scores, 0
-    mov cont_caracteres, 0
+    mov cont_caracteres, 1
     e1:
         mov al, scores[di]
         cmp al, 36 
@@ -243,7 +369,13 @@ LOCAL e1, e2, e3, e4, e5
         e2:
             cmp al, 44
             jne e4
-            
+        e5:
+            cmp cont_caracteres, 15
+            je e4 
+            mov scoresOrdenados[si], 32
+            inc cont_caracteres
+            inc si
+        jmp e5
         e4:
             mov al, scores[di]
             mov scoresOrdenados[si], al
@@ -270,7 +402,6 @@ Local for1, for2, regfor2, regfor1, res, ciclo_i, ciclo_j, pos_i, punteo_i,pos_j
     mov i, 0
     mov j, 0
     
-
     for1:
         xor ax, ax
         mov al, i
@@ -315,8 +446,6 @@ Local for1, for2, regfor2, regfor1, res, ciclo_i, ciclo_j, pos_i, punteo_i,pos_j
         inc si 
         mov al, scoresOrdenados[si]
         mov uaxb[2], al
-
-        print uaxb
         
         SacarPunteo uaxb
         mov bx, auxw
@@ -366,9 +495,6 @@ Local for1, for2, regfor2, regfor1, res, ciclo_i, ciclo_j, pos_i, punteo_i,pos_j
             mov al, scoresOrdenados[si]
             mov uaxb[2], al
             
-            print uaxb
-            Imprimir 44
-
             SacarPunteo uaxb
             
             xor bx, bx
@@ -380,7 +506,9 @@ Local for1, for2, regfor2, regfor1, res, ciclo_i, ciclo_j, pos_i, punteo_i,pos_j
             cmp ax, auxwj
             jae regfor2 
 
-
+            mov ax, auxwj
+            mov auxwi, ax
+            xor ax, ax
             LimpiarArreglo auxaux
             xor si, si
             xor di, di  
@@ -478,10 +606,4 @@ LOCAL d, u, f
     f: 
     pop bx   
     pop ax
-ENDM
-
-
-
-OrdenarMiMarcador MACRO 
-    
 ENDM
