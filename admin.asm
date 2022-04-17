@@ -44,15 +44,13 @@ Local desb, asc, des, bub, hea, tim, lout, fin, Menue, f
         jmp fin
     bub:
         limpiar
-        Menu_Burbuja
+        call Menu_Burbuja_proc
         jmp fin
     hea: 
         limpiar
-        Menu_Heap
         jmp fin
     tim:
         limpiar
-        Menu_Tim
         jmp fin
     lout:
         jmp f
@@ -122,11 +120,9 @@ Local desb, asc, des, bub, hea, tim, lout, fin, Menue, f
         jmp fin
     hea: 
         limpiar
-        Menu_Heap
         jmp fin
     tim:
         limpiar
-        Menu_Tim
         jmp fin
     lout:
         jmp f

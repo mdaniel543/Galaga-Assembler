@@ -274,6 +274,7 @@ INCLUDE ord.asm
     vel db 'Velocidad:', '$'
     pun db 'Punteo', '$'
     home db 'Presionar HOME para iniciar', '$'
+    endd db 'Presionar  END  para  salir', '$'
 
     posicion_grafica db 0, '$'
     posicion_pixeles dw 0, '$'
@@ -282,6 +283,13 @@ INCLUDE ord.asm
 
     banderaTerminaOrdenamiento db 00h, '$'
 
+    arreglo_limpiar db 118 dup('$'), '$'
+    limpa db 20h, '$'
+    ll db 0, '$'
+    iax dw 0, '$'
+    jax dw 0, '$'
+    orp db 0, '$'
+  
 .code 
 
 ;description
@@ -386,5 +394,10 @@ ModoGraficoOrdenamiento_proc proc
     ModoGraficoOrdenamiento
     ret
 ModoGraficoOrdenamiento_proc endp
+
+Menu_Burbuja_proc proc
+    Menu_Burbuja
+    ret
+Menu_Burbuja_proc endp 
 
 end main 
