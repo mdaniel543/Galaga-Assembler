@@ -255,6 +255,7 @@ INCLUDE ord.asm
     banderaDescendente db 00h, '$'
 
     velocidad dw 0, '$'
+    veloci db 0, '$'
 
     punteos db 100 dup('$'), '$'
     tiempos dw 55 dup('$'), '$'
@@ -268,6 +269,18 @@ INCLUDE ord.asm
     teste db 10 dup('$'), '$'
     auxiliar_burbuja1 db 0, '$'
     auxiliar_burbuja2 db 0, '$'
+
+    buble db 'Burbuja', '$'
+    vel db 'Velocidad:', '$'
+    pun db 'Punteo', '$'
+    home db 'Presionar HOME para iniciar', '$'
+
+    posicion_grafica db 0, '$'
+    posicion_pixeles dw 0, '$'
+    posicio_div db 0, '$'
+    posicion_final dw 0, '$'
+
+    banderaTerminaOrdenamiento db 00h, '$'
 
 .code 
 
@@ -368,5 +381,10 @@ DatosMostrados_proc proc
     DatosMostrados 
     ret
 DatosMostrados_proc endp
+
+ModoGraficoOrdenamiento_proc proc
+    ModoGraficoOrdenamiento
+    ret
+ModoGraficoOrdenamiento_proc endp
 
 end main 
