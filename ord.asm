@@ -115,6 +115,7 @@ LOCAL e1, e2, e3, e4, e5, e6, e7, e8, e9 , e10,v1, v2, v3, v4, v5, v6, v7, v8, f
     
     e8:
         call ModoGraficoOrdenamiento_proc
+        call Generar_Reporte_proc
         jmp f
     re3:
         mov banderaPuntos, 00h
@@ -655,3 +656,175 @@ LOCAL  e1, e2, e3, e4
     pop ax
     pop si 
 ENDM 
+
+Generar_Reporte MACRO
+LOCAL
+    LimpiarArreglo scoresOrdenados
+    ObtenerScores
+    call OrdenarMarcador_proc
+
+    ObtenerFecha
+	ObtenerHora
+    LimpiarArreglo ArchivoInformacion
+    CrearArchivo ArchivoRutaReporte, ArchivoHandler
+    EscribirReporte 
+    CerrarArchivo ArchivoHandler
+ENDM
+
+
+ObtenerHora macro
+	mov si, 0
+    mov ah,2ch
+	int 21h
+	ConvertirHora Hora,ch
+	mov Hora[si] , ':'
+	inc si
+	ConvertirHora Hora,cl
+    mov Hora[si], ':'
+    inc si 
+    ConvertirHora Hora, dh
+endm
+
+ConvertirHora macro arreglo,n
+	xor ax,ax
+	xor bx,bx
+	mov dx, 0
+	mov ah, 0
+	mov al, n
+	mov bl, 10d
+	div bl 
+	add al , 48
+	add ah , 48
+	mov arreglo[si] , al
+	inc si
+	mov arreglo[si] , ah
+	inc si
+endm
+
+ObtenerFecha macro
+	xor ax,ax
+	xor bx,bx
+	mov si, 0
+    mov ah,2ah
+	int 21h
+	mov bl,dl
+	ConvertirDato bx
+	mov Fecha[si] , '/'
+	inc si	
+	mov bl,dh
+	ConvertirDato bx
+endm
+
+ConvertirDato macro n
+	mov ax,n
+	mov ah,00h
+	mov bh,0ah
+	div bh
+	add al,30h
+	mov Fecha[si],al
+	inc si
+	add ah,30h
+	mov Fecha[si],ah
+	inc si
+endm
+
+EscribirReporte MACRO
+Local as, sigue
+    EscribirArchivo lineg, ArchivoHandler
+    EscribirArchivo encabezado2, ArchivoHandler
+    EscribirArchivo lineg, ArchivoHandler
+    EscribirArchivo nombre, ArchivoHandler
+    EscribirArchivo carnet, ArchivoHandler
+    EscribirArchivo lineg, ArchivoHandler
+  
+    EscribirArchivo msgtipo, ArchivoHandler
+    EscribirArchivo buble, ArchivoHandler
+    EscribirArchivo sangria1, ArchivoHandler
+    
+    EscribirArchivo msgsentido, ArchivoHandler
+    cmp banderaAscendente, 01h
+    je as 
+    EscribirArchivo msgDescendente, ArchivoHandler
+    jmp sigue
+    as:
+    EscribirArchivo msgAscendente, ArchivoHandler
+    sigue:
+    EscribirArchivo mshfecha, ArchivoHandler
+    EscribirArchivo Fecha, ArchivoHandler
+    EscribirArchivo Anio, ArchivoHandler
+    
+    EscribirArchivo sangria1, ArchivoHandler
+    EscribirArchivo msghora, ArchivoHandler
+    EscribirArchivo Hora, ArchivoHandler
+    EscribirArchivo salto, ArchivoHandler
+
+    EscribirArchivo msgLine, ArchivoHandler
+    EscribirArchivo msgMarcador2, ArchivoHandler
+
+    EscribirArchivo lineg, ArchivoHandler
+    Escribir_Marcador
+
+ENDM
+
+Escribir_Marcador MACRO 
+LOCAL coma, puntoycoma, comilla, enter, usuario, us, tiempo, siguiente, fin
+    push si
+    xor si, si
+    mov rank, 49
+
+    usuario:
+        EscribirArchivo rank, ArchivoHandler
+        EscribirArchivo sangria1, ArchivoHandler
+    us:
+        mov al, scoresOrdenados[si]
+        inc si
+        cmp al, 44
+        je coma
+        mov caracterP, al
+        EscribirArchivo caracterP, ArchivoHandler
+    jmp us
+
+    coma:
+        EscribirArchivo sangria2, ArchivoHandler
+        mov al, scoresOrdenados[si]
+        mov caracterP, al
+        EscribirArchivo caracterP, ArchivoHandler
+        EscribirArchivo sangria2, ArchivoHandler
+        inc si 
+        inc si 
+        mov al, scoresOrdenados[si]
+        mov caracterP, al
+        EscribirArchivo caracterP, ArchivoHandler
+        inc si
+        mov al, scoresOrdenados[si]
+        mov caracterP, al
+        EscribirArchivo caracterP, ArchivoHandler
+        inc si
+        mov al, scoresOrdenados[si]
+        mov caracterP, al
+        EscribirArchivo caracterP, ArchivoHandler
+        inc si
+        inc si
+        EscribirArchivo sangria1, ArchivoHandler
+    tiempo:
+        mov al, scoresOrdenados[si]
+        mov caracterP, al
+        inc si 
+        cmp al, 13
+        je siguiente
+        EscribirArchivo caracterP, ArchivoHandler
+    jmp tiempo
+
+    siguiente:
+        mov al, scoresOrdenados[si]
+        cmp al, 36
+        je fin
+        add rank, 1
+        cmp rank, 58
+        je fin
+        EscribirArchivo salto, ArchivoHandler
+    jmp usuario
+
+    fin:
+    pop si 
+ENDM

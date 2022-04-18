@@ -31,6 +31,7 @@ INCLUDE ord.asm
 
     ArchivoInformacion db 250 dup('$')
     ArchivoRutaUsuarios db 'users.gal', 00h, '$'
+    ArchivoRutaReporte db 'lastsort.rep', 00h, '$'
     ArchivoHandler dw ?, '$'
 
     users db 1000 dup('$'),'$'
@@ -289,7 +290,24 @@ INCLUDE ord.asm
     iax dw 0, '$'
     jax dw 0, '$'
     orp db 0, '$'
-  
+   ;===========reporte===========
+
+    nombre db '           Marvin Daniel Rodriguez Felix', 0ah, 0dh, '$'
+    carnet db '                     201709450', 0ah, 0dh, '$'
+    encabezado2 db "Universidad de San Carlos de Guatemala",10, 13, "Facultad de Ingenieria",10, 13, "Escuela de Ciencias y Sistemas",10, 13, "Arquitectura de Compiladores y ensambladores 1",10, 13, "Seccion A", 10, 13, "$"
+    lineg db  '--------------------------------------------------', 0ah, 0dh, '$'
+
+    msgtipo db 'Tipo: ', '$'
+    msgsentido db 'Sentido: ', '$'
+    mshfecha db 'Fecha: ', '$'
+    msghora db 'Hora: ', '$'
+    msgAscendente db 'Ascendente', 0ah, 0dh,  '$'
+    msgDescendente db 'Descendente', 0ah, 0dh, '$'
+
+    Hora db 8 dup('$'),'$'
+    Fecha db 5 dup('$'),'$'
+    Anio db '/2022', '$'
+
 .code 
 
 ;description
@@ -399,5 +417,16 @@ Menu_Burbuja_proc proc
     Menu_Burbuja
     ret
 Menu_Burbuja_proc endp 
+
+Generar_Reporte_proc proc
+    Generar_Reporte
+    ret
+Generar_Reporte_proc endp
+
+OrdenarMarcador_proc proc
+    OrdenarMarcador
+    ret
+OrdenarMarcador_proc endp
+
 
 end main 

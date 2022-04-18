@@ -137,7 +137,8 @@ LOCAL e1, e2, e3, e4, e5
     e1:
         LimpiarArreglo scoresOrdenados
         ObtenerScores
-        OrdenarMarcador
+        mov banderaDescendente, 01h
+        call OrdenarMarcador_proc
 
         print msgMarcador1
         print bufferU
@@ -162,7 +163,8 @@ LOCAL e1, e2, e3, e4, e5
     e1:
         LimpiarArreglo scoresOrdenados
         ObtenerScores
-        OrdenarMarcador
+        mov banderaDescendente, 01h
+        call OrdenarMarcador_proc
 
         print msgMarcador11
         print bufferU
@@ -257,6 +259,8 @@ LOCAL coma, puntoycoma, comilla, enter, usuario, us, tiempo, siguiente, fin
         cmp al, 36
         je fin
         add rank, 1
+        cmp rank, 58
+        je fin
         print salto
     jmp usuario
 
@@ -302,6 +306,8 @@ LOCAL coma, puntoycoma, comilla, enter, usuario, us,sup, tiempo,otro_usuario, si
     usuario:
         pop si 
         add rank, 1
+        cmp rank, 58
+        je fin
         print salto
         print rank
         print sangria1
@@ -433,7 +439,7 @@ ENDM
 
 
 OrdenarMarcador MACRO 
-Local for1, for2, regfor2, regfor1, res, ciclo_i, ciclo_j, pos_i, punteo_i,pos_j, punteo_j, guardar, cambiar, ccambiar, sscar, sacar
+Local h, des, for1, for2, regfor2, regfor1, res, ciclo_i, ciclo_j, pos_i, punteo_i,pos_j, punteo_j, guardar, cambiar, ccambiar, sscar, sacar
     push ax
     push bx
     push si
@@ -546,9 +552,19 @@ Local for1, for2, regfor2, regfor1, res, ciclo_i, ciclo_j, pos_i, punteo_i,pos_j
 
             xor ax, ax
             mov ax, auxwi ; aux[i] < aux[j]
+
+            cmp banderaDescendente, 01h
+            je des
+
+            cmp ax, auxwj
+            jbe regfor2
+            jmp h
+
+            des:
             cmp ax, auxwj
             jae regfor2 
 
+            h:
             mov ax, auxwj
             mov auxwi, ax
             xor ax, ax

@@ -116,7 +116,7 @@ Local desb, asc, des, bub, hea, tim, lout, fin, Menue, f
         jmp fin
     bub:
         limpiar
-        Menu_Burbuja
+        call Menu_Burbuja_proc
         jmp fin
     hea: 
         limpiar

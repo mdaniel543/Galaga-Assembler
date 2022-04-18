@@ -44,3 +44,20 @@ Local Inicio,Final
 	jmp Final
 	Final:
 ENDM
+
+EscribirArchivoF macro arreglo, handler
+Local Inicio,Final
+	mov al, arreglo
+	cmp al, 36
+	je Final
+	Inicio:
+	mov ah,40h
+	mov bx,handler
+	mov cx, 01h
+	lea dx,arreglo
+	int 21h
+	jc Error	
+	jmp Final
+
+	Final:
+endm
