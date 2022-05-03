@@ -176,6 +176,7 @@ LOCAL Inicio, contador30,ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
         add intentos, 1
         mov al, intentos
 
+        xor di, di
         mov di, guardarDI
         cmp al, 3
         je ure
@@ -184,15 +185,13 @@ LOCAL Inicio, contador30,ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
     ure:
         inc di 
         mov al, users[di]
-        mov temp, al
-        inc di 
-        mov al, users[di]
         cmp al, 13
         je eh
 
         jmp ure
     eh:
-        mov al, temp
+        dec di
+        mov al, users[di]
         cmp al, 48
         je normal
         jne contador30
@@ -217,6 +216,7 @@ LOCAL Inicio, contador30,ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
     ; ============= si es normal bloqueo el usuario en el arreglo==========
     normal:
         print msg3intentos
+        xor di, di 
         mov di, guardarDI
     cloop:
         inc di
@@ -238,6 +238,7 @@ LOCAL Inicio, contador30,ur, final, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11
         print bufferU
         print salto
         Credenciales 01h
+        xor di, di 
         mov di, guardarDI
         jmp u2
     ;================no existe el usuario que ingreso===============
